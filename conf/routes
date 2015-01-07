@@ -1,0 +1,30 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Imports
+->          /                          commons.Routes
+
+
+# Home page
+GET     /                                   @org.iatoki.judgels.sealtiel.controllers.ApplicationController.index()
+POST    /login                              @org.iatoki.judgels.sealtiel.controllers.ApplicationController.login()
+GET     /logout                             @org.iatoki.judgels.sealtiel.controllers.ApplicationController.logout()
+
+GET     /clients/                           @org.iatoki.judgels.sealtiel.controllers.ClientController.index()
+GET     /clients/add                        @org.iatoki.judgels.sealtiel.controllers.ClientController.create()
+POST    /clients/add                        @org.iatoki.judgels.sealtiel.controllers.ClientController.doCreate()
+GET     /clients/:clientId                  @org.iatoki.judgels.sealtiel.controllers.ClientController.view(clientId: Long)
+POST    /clients/:clientId/addAcq           @org.iatoki.judgels.sealtiel.controllers.ClientController.addAcquaintance(clientId: Long)
+GET     /clients/:clientId/remove/:channel  @org.iatoki.judgels.sealtiel.controllers.ClientController.removeAcquaintance(clientId: Long, channel: String)
+
+# Services
+POST    /services/get_message               @org.iatoki.judgels.sealtiel.controllers.MessageController.getMessage()
+POST    /services/send_message              @org.iatoki.judgels.sealtiel.controllers.MessageController.sendMessage()
+POST    /services/send_confirmation         @org.iatoki.judgels.sealtiel.controllers.MessageController.confirmMessage()
+POST    /services/send_rpc_message          @org.iatoki.judgels.sealtiel.controllers.MessageController.sendRPCMessage()
+POST    /services/extend_timeout            @org.iatoki.judgels.sealtiel.controllers.MessageController.extendTimeout()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file                       controllers.Assets.at(path="/public", file)
+GET     /vassets/*file                      controllers.Assets.versioned(path="/public", file: Asset)

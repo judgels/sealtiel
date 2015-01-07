@@ -1,0 +1,14 @@
+@(newClientForm: Form[org.iatoki.judgels.sealtiel.ClientCreateForm])
+
+@import play.i18n.Messages
+
+@implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-xs-2", "col-xs-10") }
+
+@b3.form(action = org.iatoki.judgels.sealtiel.controllers.routes.ClientController.doCreate()) {
+    @b3.text(newClientForm("appName"), 'class->"form-control")
+    @b3.text(newClientForm("adminName"), 'class->"form-control")
+    @b3.text(newClientForm("adminEmail"), 'class->"form-control")
+
+    @b3.submit('class -> "btn btn-primary") { @Messages.get("general.create") }
+}
+

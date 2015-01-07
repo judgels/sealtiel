@@ -1,0 +1,28 @@
+@(listClient: List[org.iatoki.judgels.sealtiel.Client])
+
+<div class="table-responsive">
+    <table class="table table-hover table-condensed table-bordered">
+        <tr>
+            <th>id</th>
+            <th>channel</th>
+            <th>client id</th>
+            <th>app name</th>
+            <th>admin name</th>
+            <th>admin email</th>
+            <th></th>
+        </tr>
+        @for(client <- listClient) {
+            <tr>
+                <td>@client.getId</td>
+                <td>@client.getChannel</td>
+                <td>@client.getClientId</td>
+                <td>@client.getName</td>
+                <td>@client.getAdminName</td>
+                <td>@client.getAdminEmail</td>
+                <td>
+                    <a href="@org.iatoki.judgels.sealtiel.controllers.routes.ClientController.view(client.getId)"><i class="fa fa-search"></i> view</a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
