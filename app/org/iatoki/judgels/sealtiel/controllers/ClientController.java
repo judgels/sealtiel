@@ -25,7 +25,6 @@ import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Security;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Security.Authenticated(LoggedIn.class)
@@ -80,9 +79,9 @@ public class ClientController extends Controller {
 
     @Transactional(readOnly = true)
     public Result view(long clientId) {
-        Client client = clientService.findClientById(clientId);
+        Client client = clientService.findClientByClientId(clientId);
         if (client != null) {
-            List<Client> acquaintances = clientService.findClientsByClientChannels(Arrays.asList(client.getAcquaintances().split(",")));
+            List<Client> acquaintances = clientService.findClientsByClientJids(client.getAcquaintances());
             LazyHtml content = new LazyHtml(viewView.render(client, clientService.findAllClient(), acquaintances));
             content.appendLayout(c -> headingLayout.render(Messages.get("client.view"), c));
             content.appendLayout(c -> breadcrumbsLayout.render(ImmutableList.of(
@@ -99,11 +98,11 @@ public class ClientController extends Controller {
 
     @Transactional
     public Result addAcquaintance(long clientId) {
-        Client client = clientService.findClientById(clientId);
+        Client client = clientService.findClientByClientId(clientId);
         if (client != null) {
             DynamicForm form = DynamicForm.form().bindFromRequest();
             String acquaintanceChannel = form.get("acquaintance");
-            clientService.addAcquaintance(client.getClientId(), acquaintanceChannel);
+            clientService.addAcquaintance(client.getClientJid(), acquaintanceChannel);
 
             return redirect(routes.ClientController.view(clientId));
         } else {
@@ -113,10 +112,10 @@ public class ClientController extends Controller {
 
     @Transactional
     public Result removeAcquaintance(long clientId, String acquaintanceChannel) {
-        Client client = clientService.findClientById(clientId);
+        Client client = clientService.findClientByClientId(clientId);
         if (client != null) {
 
-            clientService.removeAcquaintance(client.getClientId(), acquaintanceChannel);
+            clientService.removeAcquaintance(client.getClientJid(), acquaintanceChannel);
 
             return redirect(routes.ClientController.view(clientId));
         } else {
@@ -126,7 +125,8 @@ public class ClientController extends Controller {
 
     private void appendTemplateLayout(LazyHtml content) {
         content.appendLayout(c -> leftSidebarWithoutProfileLayout.render(ImmutableList.of(
-                        new InternalLink(Messages.get("client.clients"), routes.ClientController.index())
+                        new InternalLink(Messages.get("client.clients"), routes.ClientController.index()),
+                        new InternalLink(Messages.get("system.connection"), routes.ApplicationController.checkRabbitmqConnection())
                 ), c)
         );
 

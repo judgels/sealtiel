@@ -10,6 +10,7 @@
 GET     /                                   @org.iatoki.judgels.sealtiel.controllers.ApplicationController.index()
 POST    /login                              @org.iatoki.judgels.sealtiel.controllers.ApplicationController.login()
 GET     /logout                             @org.iatoki.judgels.sealtiel.controllers.ApplicationController.logout()
+GET     /connection                         @org.iatoki.judgels.sealtiel.controllers.ApplicationController.checkRabbitmqConnection()
 
 GET     /clients/                           @org.iatoki.judgels.sealtiel.controllers.ClientController.index()
 GET     /clients/add                        @org.iatoki.judgels.sealtiel.controllers.ClientController.create()

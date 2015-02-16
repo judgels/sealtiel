@@ -1,8 +1,10 @@
 package org.iatoki.judgels.sealtiel;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.iatoki.judgels.commons.IdentityUtils;
+import org.iatoki.judgels.commons.JudgelsUtils;
 import org.iatoki.judgels.sealtiel.models.dao.interfaces.ClientDao;
 import org.iatoki.judgels.sealtiel.models.domains.ClientModel;
 
@@ -21,8 +23,9 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client findClientById(long clientId) {
-        return new Client(clientDao.findById(clientId));
+    public Client findClientByClientId(long clientId) {
+        ClientModel clientModel = clientDao.findById(clientId);
+        return new Client(clientModel.id, clientModel.jid, clientModel.secret, clientModel.name, clientModel.adminName, clientModel.adminEmail, Arrays.asList(clientModel.acquaintances.split(",")), clientModel.totalDownload, clientModel.lastDownloadTime);
     }
 
     @Override
@@ -34,10 +37,8 @@ public class ClientServiceImpl implements ClientService {
         clientModel.acquaintances = "";
         clientModel.totalDownload = 0;
         clientModel.lastDownloadTime = System.currentTimeMillis();
-        clientModel.channel = UUID.randomUUID().toString();
-        clientModel.secret = UUID.randomUUID().toString();
+        clientModel.secret = JudgelsUtils.hashMD5(UUID.randomUUID().toString());
 
-        // TODO generate clientChannel and clientSecret
         clientDao.persist(clientModel, IdentityUtils.getUserJid(), IdentityUtils.getIpAddress());
     }
 
@@ -45,34 +46,31 @@ public class ClientServiceImpl implements ClientService {
     public List<Client> findAllClient() {
         List<ClientModel> clientModels = clientDao.findAll();
 
-        return clientModels.stream().map(c -> new Client(c)).collect(Collectors.toList());
+        return clientModels.stream().map(c -> new Client(c.id, c.jid, c.secret, c.name, c.adminName, c.adminEmail, Arrays.asList(c.acquaintances.split(",")), c.totalDownload, c.lastDownloadTime)).collect(Collectors.toList());
     }
 
     @Override
-    public Client findClientByClientId(String clientId) {
-        return new Client(clientDao.findByJid(clientId));
+    public Client findClientByClientJid(String clientJid) {
+        System.out.println(clientJid);
+        ClientModel clientModel = clientDao.findByJid(clientJid);
+        return new Client(clientModel.id, clientModel.jid, clientModel.secret, clientModel.name, clientModel.adminName, clientModel.adminEmail, Arrays.asList(clientModel.acquaintances.split(",")), clientModel.totalDownload, clientModel.lastDownloadTime);
     }
 
     @Override
-    public Client findClientByChannel(String channel) {
-        return new Client(clientDao.findClientByChannel(channel));
-    }
-
-    @Override
-    public List<Client> findClientsByClientChannels(List<String> clientChannels) {
-        List<Client> result = new ArrayList<>();
-        List<ClientModel> clientModels = clientDao.findClientsByClientChannels(clientChannels);
+    public List<Client> findClientsByClientJids(List<String> clientJids) {
+        ImmutableList.Builder<Client> result = ImmutableList.builder();
+        List<ClientModel> clientModels = clientDao.findClientsByClientJids(clientJids);
 
         for (ClientModel clientModel : clientModels) {
-            result.add(new Client(clientModel));
+            result.add(new Client(clientModel.id, clientModel.jid, clientModel.secret, clientModel.name, clientModel.adminName, clientModel.adminEmail, Arrays.asList(clientModel.acquaintances.split(",")), clientModel.totalDownload, clientModel.lastDownloadTime));
         }
 
-        return result;
+        return result.build();
     }
 
     @Override
-    public void downloadLib(String clientId) {
-        ClientModel clientModel = clientDao.findByJid(clientId);
+    public void downloadLib(String clientJid) {
+        ClientModel clientModel = clientDao.findByJid(clientJid);
         clientModel.totalDownload++;
         clientModel.lastDownloadTime = System.currentTimeMillis();
 
@@ -80,11 +78,11 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void addAcquaintance(String clientId, String acquaintance) {
-        ClientModel clientModel = clientDao.findByJid(clientId);
+    public void addAcquaintance(String clientJid, String acquaintance) {
+        ClientModel clientModel = clientDao.findByJid(clientJid);
         List<String> list = null;
         if (!"".equals(clientModel.acquaintances)) {
-            list = Arrays.asList(clientModel.acquaintances.split(","));
+            list = Lists.newArrayList(clientModel.acquaintances.split(","));
         } else {
             list = new ArrayList<>();
         }
@@ -95,8 +93,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void removeAcquaintance(String clientId, String acquaintance) {
-        ClientModel clientModel = clientDao.findByJid(clientId);
+    public void removeAcquaintance(String clientJid, String acquaintance) {
+        ClientModel clientModel = clientDao.findByJid(clientJid);
         if (!"".equals(clientModel.acquaintances)) {
             List<String> list = Lists.newArrayList(clientModel.acquaintances.split(","));
             list.remove(acquaintance);

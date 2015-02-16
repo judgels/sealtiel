@@ -1,5 +1,5 @@
 package org.iatoki.judgels.sealtiel;
 
 public interface MessageService {
-    Message createMessage(long id, String sourceClientChannel, String sourceIPAddress, String targetClientChannel, String messageType, String message, int priority);
+    Message createMessage(long id, String sourceClientJid, String sourceIPAddress, String targetClientJid, String messageType, String message, int priority);
 }

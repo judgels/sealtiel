@@ -35,7 +35,7 @@ public class RabbitmqConnection {
     }
 
     public void createConnection() throws IOException {
-        if ((connection!=null) && (connection.isOpen())) {
+        if ((connection != null) && (connection.isOpen())) {
             connection.close();
         }
         connection = factory.newConnection();
@@ -43,7 +43,7 @@ public class RabbitmqConnection {
     }
 
     public boolean isConnected() {
-        return ((connection!=null) && (connection.isOpen()) && (channel.isOpen()));
+        return ((connection != null) && (channel != null) && (connection.isOpen()) && (channel.isOpen()));
     }
 
     public Channel getChannel() {
@@ -51,19 +51,14 @@ public class RabbitmqConnection {
     }
 
     public static RabbitmqConnection getInstance() {
-        if (INSTANCE==null) {
+        if (INSTANCE == null) {
             INSTANCE = new RabbitmqConnection();
         }
         if (!INSTANCE.isConnected()) {
-            boolean check = true;
-
-            while (check) {
-                try {
-                    INSTANCE.createConnection();
-                    check = false;
-                } catch (IOException e) {
-
-                }
+            try {
+                INSTANCE.createConnection();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         return INSTANCE;

@@ -6,6 +6,7 @@ lazy val main = (project in file("."))
                   .enablePlugins(PlayJava)
                   .disablePlugins(plugins.JUnitXmlReportPlugin)
                   .dependsOn(commons)
+                  .aggregate(commons)
 
 lazy val commons = RootProject(file("../judgels-play-commons"))
 
@@ -17,7 +18,7 @@ libraryDependencies ++= Seq(
   cache,
   "org.hibernate" % "hibernate-entitymanager" % "4.3.7.Final",
 //  "org.hibernate" % "hibernate-jpamodelgen" % "4.3.7.Final",
-  "org.iatoki.judgels.sealtiel" % "sealtielMessage" % "1.0.0",
+  "org.iatoki.judgels.sealtiel" % "sealtiel-message" % "1.0.3",
   "commons-io" % "commons-io" % "2.4",
   "com.rabbitmq" % "amqp-client" % "3.2.2",
   "com.google.code.gson" % "gson" % "2.2.4",

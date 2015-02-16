@@ -15,7 +15,6 @@ import org.iatoki.judgels.sealtiel.RabbitmqConnection;
 import org.iatoki.judgels.sealtiel.Requeuer;
 import org.iatoki.judgels.sealtiel.UnconfirmedMessage;
 import org.iatoki.judgels.sealtiel.client.ClientMessage;
-import org.iatoki.judgels.sealtiel.models.domains.ClientModel;
 import play.Logger;
 import play.data.DynamicForm;
 import play.db.jpa.Transactional;
@@ -51,46 +50,48 @@ public class MessageController extends Controller {
 
     public Result sendMessage() {
         DynamicForm params = DynamicForm.form().bindFromRequest();
-
-        if (authenticateClient(params.get("clientId"), params.get("clientSecret"))) {
+        String clientJid = params.get("clientJid");
+        String clientSecret = params.get("clientSecret");
+        System.out.println(clientJid+ " " +clientSecret);
+        Client client = clientService.findClientByClientJid(clientJid);
+        if (client.getSecret().equals(clientSecret)) {
             Logger.info("================================================");
             Logger.info("SEND MESSAGE");
             Logger.info("================================================");
 
 
             try {
-                ClientModel client = (ClientModel) ctx().args.get("client");
                 Gson gson = GsonWrapper.getInstance();
 
                 ClientMessage clientMessage = gson.fromJson(params.get("message"), ClientMessage.class);
-                clientMessage.setSourceClientChannel(client.channel);
+                clientMessage.setSourceClientJid(client.getClientJid());
                 clientMessage.setSourceIPAddress(request().remoteAddress());
-                clientMessage.setTimestamp(new Date().getTime() + "");
+                clientMessage.setTimestamp(System.currentTimeMillis() + "");
 
-                Message message = messageService.createMessage(clientMessage.getId(), clientMessage.getSourceClientChannel(), clientMessage.getSourceIPAddress(), clientMessage.getTargetClientChannel(), clientMessage.getMessageType(), clientMessage.getMessage(), clientMessage.getPriority());
-                if (client.acquaintances.contains(clientMessage.getTargetClientChannel())) {
+                Message message = messageService.createMessage(clientMessage.getId(), clientMessage.getSourceClientJid(), clientMessage.getSourceIPAddress(), clientMessage.getTargetClientJid(), clientMessage.getMessageType(), clientMessage.getMessage(), clientMessage.getPriority());
+                if (client.getAcquaintances().contains(clientMessage.getTargetClientJid())) {
                     // target verified
 
                     Channel channel = RabbitmqConnection.getInstance().getChannel();
                     Map<String, Object> args = new HashMap<String, Object>();
                     args.put("x-max-priority", 10);
-                    channel.queueDeclare(message.getTargetClientChannel(), true, false, false, args);
+                    channel.queueDeclare(message.getTargetClientJid(), true, false, false, args);
 
                     AMQP.BasicProperties props = MessageProperties.PERSISTENT_BASIC.builder().priority(message.getPriority()).build();
-                    channel.basicPublish("", message.getTargetClientChannel(), props, gson.toJson(message).getBytes());
+                    channel.basicPublish("", message.getTargetClientJid(), props, gson.toJson(message).getBytes());
                     return ok();
-                } else if (clientService.findClientByChannel(clientMessage.getTargetClientChannel()) == null) {
+                } else if (clientService.findClientByClientJid(clientMessage.getTargetClientJid()) == null) {
                     // either target is for RPC or in other nodes
 
                     Channel channel = RabbitmqConnection.getInstance().getChannel();
                     Map<String, Object> args = new HashMap<>();
                     args.put("x-max-priority", 10);
-                    channel.queueDeclare(message.getTargetClientChannel(), true, false, false, args);
+                    channel.queueDeclare(message.getTargetClientJid(), true, false, false, args);
 
                     AMQP.BasicProperties props = MessageProperties.PERSISTENT_BASIC.builder().priority(message.getPriority()).build();
-                    channel.basicPublish("", message.getTargetClientChannel(), props, gson.toJson(message).getBytes());
+                    channel.basicPublish("", message.getTargetClientJid(), props, gson.toJson(message).getBytes());
 
-                    executorService.schedule(new QueueDeleter(message.getTargetClientChannel()), 5, TimeUnit.MINUTES);
+                    executorService.schedule(new QueueDeleter(message.getTargetClientJid()), 5, TimeUnit.MINUTES);
 
                     return ok();
                 } else {
@@ -107,8 +108,11 @@ public class MessageController extends Controller {
 
     public Result getMessage() {
         DynamicForm params = DynamicForm.form().bindFromRequest();
+        String clientJid = params.get("clientJid");
+        String clientSecret = params.get("clientSecret");
+        Client client = clientService.findClientByClientJid(clientJid);
 
-        if (authenticateClient(params.get("clientId"), params.get("clientSecret"))) {
+        if (client.getSecret().equals(clientSecret)) {
             Logger.info("================================================");
             Logger.info("GET MESSAGE");
 
@@ -117,10 +121,9 @@ public class MessageController extends Controller {
             Channel channel = RabbitmqConnection.getInstance().getChannel();
 
             try {
-                Client client = (Client) ctx().args.get("client");
-                channel.queueDeclare(client.getChannel(), true, false, false, null);
+                channel.queueDeclare(client.getClientJid(), true, false, false, null);
 
-                GetResponse delivery = channel.basicGet(client.getChannel(), false);
+                GetResponse delivery = channel.basicGet(client.getClientJid(), false);
                 if (delivery != null) {
                     result = new String(delivery.getBody());
 
@@ -149,8 +152,11 @@ public class MessageController extends Controller {
 
     public Result confirmMessage() {
         DynamicForm params = DynamicForm.form().bindFromRequest();
+        String clientJid = params.get("clientJid");
+        String clientSecret = params.get("clientSecret");
+        Client client = clientService.findClientByClientJid(clientJid);
 
-        if (authenticateClient(params.get("clientId"), params.get("clientSecret"))) {
+        if (client.getSecret().equals(clientSecret)) {
             Logger.info("================================================");
             Logger.info("CONFIRM MESSAGE "+params.get("messageId"));
 
@@ -178,8 +184,11 @@ public class MessageController extends Controller {
 
     public Result sendRPCMessage() {
         DynamicForm params = DynamicForm.form().bindFromRequest();
+        String clientJid = params.get("clientJid");
+        String clientSecret = params.get("clientSecret");
+        Client client = clientService.findClientByClientJid(clientJid);
 
-        if (authenticateClient(params.get("clientId"), params.get("clientSecret"))) {
+        if (client.getSecret().equals(clientSecret)) {
             Logger.info("================================================");
             Logger.info("SEND RPC MESSAGE");
             Logger.info("================================================");
@@ -187,27 +196,26 @@ public class MessageController extends Controller {
             String result = "";
 
             try {
-                ClientModel client = (ClientModel) ctx().args.get("client");
                 Gson gson = GsonWrapper.getInstance();
 
                 ClientMessage clientMessage = gson.fromJson(params.get("message"), ClientMessage.class);
-                clientMessage.setSourceClientChannel(client.channel);
+                clientMessage.setSourceClientJid(client.getClientJid());
                 clientMessage.setSourceIPAddress(request().remoteAddress());
                 clientMessage.setTimestamp(new Date().getTime() + "");
 
-                Message message = messageService.createMessage(clientMessage.getId(), clientMessage.getSourceClientChannel(), clientMessage.getSourceIPAddress(), clientMessage.getTargetClientChannel(), clientMessage.getMessageType(), clientMessage.getMessage(), clientMessage.getPriority());
-                if (client.acquaintances.contains(clientMessage.getTargetClientChannel())) {
+                Message message = messageService.createMessage(clientMessage.getId(), clientMessage.getSourceClientJid(), clientMessage.getSourceIPAddress(), clientMessage.getTargetClientJid(), clientMessage.getMessageType(), clientMessage.getMessage(), clientMessage.getPriority());
+                if (client.getAcquaintances().contains(clientMessage.getTargetClientJid())) {
 
                     Channel channel = RabbitmqConnection.getInstance().getChannel();
                     Map<String, Object> args = new HashMap<String, Object>();
                     args.put("x-max-priority", 10);
-                    channel.queueDeclare(message.getTargetClientChannel(), true, false, false, args);
+                    channel.queueDeclare(message.getTargetClientJid(), true, false, false, args);
 
                     UUID unique_queue = UUID.randomUUID();
-                    clientMessage.setSourceClientChannel(unique_queue.toString());
+                    clientMessage.setSourceClientJid(unique_queue.toString());
                     AMQP.BasicProperties props = MessageProperties.PERSISTENT_BASIC.builder().priority(10).build();
 
-                    channel.basicPublish("", message.getTargetClientChannel(), props, gson.toJson(message).getBytes());
+                    channel.basicPublish("", message.getTargetClientJid(), props, gson.toJson(message).getBytes());
 
                     channel.queueDeclare(unique_queue.toString(), true, false, false, null);
                     GetResponse delivery = channel.basicGet(unique_queue.toString(), true);
@@ -238,8 +246,11 @@ public class MessageController extends Controller {
 
     public Result extendTimeout() {
         DynamicForm params = DynamicForm.form().bindFromRequest();
+        String clientJid = params.get("clientJid");
+        String clientSecret = params.get("clientSecret");
+        Client client = clientService.findClientByClientJid(clientJid);
 
-        if (authenticateClient(params.get("clientId"), params.get("clientSecret"))) {
+        if (client.getSecret().equals(clientSecret)) {
             Logger.info("================================================");
             Logger.info("EXTEND TIMEOUT " + params.get("messageId"));
 
@@ -262,10 +273,5 @@ public class MessageController extends Controller {
         } else {
             return notFound();
         }
-    }
-
-    public boolean authenticateClient(String clientId, String clientSecret) {
-        Client client = clientService.findClientByClientId(clientId);
-        return client.getSecret().equals(clientSecret);
     }
 }

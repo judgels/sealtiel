@@ -1,43 +1,41 @@
 package org.iatoki.judgels.sealtiel;
 
-import org.iatoki.judgels.sealtiel.models.domains.MessageModel;
-
 public class Message {
 
     private long id;
-    private String sourceClientChannel;
+    private String sourceClientJid;
     private String sourceIPAddress;
-    private String targetClientChannel;
+    private String targetClientJid;
     private String messageType;
     private String message;
     private long timestamp;
     private int priority;
 
-    public Message(MessageModel messageModel) {
-        this.id = messageModel.id;
-        this.sourceClientChannel = messageModel.sourceClientChannel;
-        this.sourceIPAddress = messageModel.sourceIPAddress;
-        this.targetClientChannel = messageModel.targetClientChannel;
-        this.messageType = messageModel.messageType;
-        this.message = messageModel.message;
-        this.timestamp = messageModel.timeCreate;
-        this.priority = messageModel.priority;
+    public Message(long id, String sourceClientJid, String sourceIPAddress, String targetClientJid, String messageType, String message, long timestamp, int priority) {
+        this.id = id;
+        this.sourceClientJid = sourceClientJid;
+        this.sourceIPAddress = sourceIPAddress;
+        this.targetClientJid = targetClientJid;
+        this.messageType = messageType;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.priority = priority;
     }
 
     public long getId() {
         return id;
     }
 
-    public String getSourceClientChannel() {
-        return sourceClientChannel;
-    }
-
     public String getSourceIPAddress() {
         return sourceIPAddress;
     }
 
-    public String getTargetClientChannel() {
-        return targetClientChannel;
+    public String getSourceClientJid() {
+        return sourceClientJid;
+    }
+
+    public String getTargetClientJid() {
+        return targetClientJid;
     }
 
     public String getMessageType() {

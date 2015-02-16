@@ -1,16 +1,14 @@
 package org.iatoki.judgels.sealtiel;
 
-import org.iatoki.judgels.sealtiel.models.domains.ClientModel;
+import java.util.List;
 
 public class Client {
 
     private long id;
 
-    private String clientId;
+    private String clientJid;
 
     private String secret;
-
-    private String channel;
 
     private String name;
 
@@ -18,39 +16,34 @@ public class Client {
 
     private String adminEmail;
 
-    private String acquaintances;
+    private List<String> acquaintances;
 
     private long totalDownload;
 
     private long lastDownloadTime;
 
-    public Client(ClientModel clientModel) {
-        this.id = clientModel.id;
-        this.clientId = clientModel.jid;
-        this.secret = clientModel.secret;
-        this.channel = clientModel.channel;
-        this.name = clientModel.name;
-        this.adminName = clientModel.adminName;
-        this.adminEmail = clientModel.adminEmail;
-        this.acquaintances = clientModel.acquaintances;
-        this.totalDownload = clientModel.totalDownload;
-        this.lastDownloadTime = clientModel.lastDownloadTime;
+    public Client(long id, String clientJid, String secret, String name, String adminName, String adminEmail, List<String> acquaintances, long totalDownload, long lastDownloadTime) {
+        this.id = id;
+        this.clientJid = clientJid;
+        this.secret = secret;
+        this.name = name;
+        this.adminName = adminName;
+        this.adminEmail = adminEmail;
+        this.acquaintances = acquaintances;
+        this.totalDownload = totalDownload;
+        this.lastDownloadTime = lastDownloadTime;
     }
 
     public long getId() {
         return id;
     }
 
-    public String getClientId() {
-        return clientId;
+    public String getClientJid() {
+        return clientJid;
     }
 
     public String getSecret() {
         return secret;
-    }
-
-    public String getChannel() {
-        return channel;
     }
 
     public String getName() {
@@ -65,7 +58,7 @@ public class Client {
         return adminEmail;
     }
 
-    public String getAcquaintances() {
+    public List<String> getAcquaintances() {
         return acquaintances;
     }
 

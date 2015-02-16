@@ -7,18 +7,16 @@ public interface ClientService {
 
     List<Client> findAllClient();
 
-    Client findClientById(long clientId);
+    Client findClientByClientId(long clientId);
 
-    Client findClientByClientId(String clientId);
+    Client findClientByClientJid(String clientJid);
 
-    Client findClientByChannel(String channel);
+    List<Client> findClientsByClientJids(List<String> clientJids);
 
-    List<Client> findClientsByClientChannels(List<String> clientChannels);
+    void downloadLib(String clientJid);
 
-    void downloadLib(String clientId);
+    void addAcquaintance(String clientJid, String acquaintance);
 
-    void addAcquaintance(String clientId, String acquaintance);
-
-    void removeAcquaintance(String clientId, String acquaintance);
+    void removeAcquaintance(String clientJid, String acquaintance);
 
 }

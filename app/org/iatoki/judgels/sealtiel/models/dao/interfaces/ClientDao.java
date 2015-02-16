@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface ClientDao extends JudgelsDao<ClientModel> {
 
-    ClientModel findClientByChannel(String channel);
-
-    List<ClientModel> findClientsByClientChannels(Collection<String> clientChannels);
+    List<ClientModel> findClientsByClientJids(Collection<String> clientJids);
 
 }

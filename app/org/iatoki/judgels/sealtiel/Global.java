@@ -9,7 +9,10 @@ import org.iatoki.judgels.sealtiel.models.dao.interfaces.ClientDao;
 import org.iatoki.judgels.sealtiel.models.dao.interfaces.MessageDao;
 import play.Application;
 import play.Play;
+import play.libs.F;
 import play.mvc.Controller;
+import play.mvc.Http;
+import play.mvc.Result;
 
 import java.io.File;
 import java.util.HashMap;
@@ -68,5 +71,11 @@ public class Global extends org.iatoki.judgels.commons.Global {
             }
         }
         return controllerClass.cast(cache.get(controllerClass));
+    }
+
+    @Override
+    public F.Promise<Result> onHandlerNotFound(Http.RequestHeader requestHeader) {
+        System.out.println(requestHeader.path());
+        return super.onHandlerNotFound(requestHeader);
     }
 }

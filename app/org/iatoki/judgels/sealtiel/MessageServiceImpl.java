@@ -13,17 +13,17 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Message createMessage(long id, String sourceClientChannel, String sourceIPAddress, String targetClientChannel, String messageType, String message, int priority) {
+    public Message createMessage(long id, String sourceClientJid, String sourceIPAddress, String targetClientJid, String messageType, String message, int priority) {
         MessageModel messageModel = new MessageModel();
-        messageModel.sourceClientChannel = sourceClientChannel;
+        messageModel.sourceClientJid = sourceClientJid;
         messageModel.sourceIPAddress = sourceIPAddress;
-        messageModel.targetClientChannel = targetClientChannel;
+        messageModel.targetClientJid = targetClientJid;
         messageModel.messageType = messageType;
         messageModel.message = message;
         messageModel.priority = priority;
 
         messageDao.persist(messageModel, IdentityUtils.getUserJid(), IdentityUtils.getIpAddress());
 
-        return new Message(messageModel);
+        return new Message(messageModel.id, messageModel.sourceClientJid, messageModel.sourceIPAddress, messageModel.targetClientJid, messageModel.messageType, messageModel.message, messageModel.timeCreate, messageModel.priority);
     }
 }

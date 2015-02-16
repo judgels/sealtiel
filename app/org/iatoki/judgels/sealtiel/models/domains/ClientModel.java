@@ -1,5 +1,6 @@
 package org.iatoki.judgels.sealtiel.models.domains;
 
+import org.iatoki.judgels.commons.models.JidPrefix;
 import org.iatoki.judgels.commons.models.domains.AbstractJudgelsModel;
 
 import javax.persistence.Column;
@@ -8,11 +9,10 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "sealtiel_client")
+@JidPrefix("SECL")
 public class ClientModel extends AbstractJudgelsModel {
 
     public String secret;
-
-    public String channel;
 
     public String name;
 

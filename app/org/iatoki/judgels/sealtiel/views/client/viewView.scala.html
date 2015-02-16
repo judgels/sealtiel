@@ -7,7 +7,7 @@
 		<div class="col-md-3">
 			<select name="acquaintance" class="form-control">
 				@for(client <- listClients) {
-					<option value="@client.getChannel">@client.getName (@client.getAdminEmail)</option>
+					<option value="@client.getClientJid">@client.getName (@client.getAdminEmail)</option>
 				}
 			</select>
 		</div>
@@ -28,10 +28,10 @@
 		</tr>
 		@for(acquaintance <- acquaintances) {
 			<tr>
-				<td>@acquaintance.getChannel</td>
+				<td>@acquaintance.getClientJid</td>
 				<td>@acquaintance.getName</td>
 				<td>
-					<a href="@org.iatoki.judgels.sealtiel.controllers.routes.ClientController.removeAcquaintance(client.getId, acquaintance.getChannel)"><i class="fa fa-times"></i> Remove</a>
+					<a href="@org.iatoki.judgels.sealtiel.controllers.routes.ClientController.removeAcquaintance(client.getId, acquaintance.getClientJid)"><i class="fa fa-times"></i> Remove</a>
 				</td>
 			</tr>
 		}

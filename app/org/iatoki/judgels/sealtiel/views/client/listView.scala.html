@@ -4,8 +4,9 @@
     <table class="table table-hover table-condensed table-bordered">
         <tr>
             <th>id</th>
-            <th>channel</th>
-            <th>client id</th>
+            <th>client jid</th>
+            <th>client secret</th>
+            <th>name</th>
             <th>app name</th>
             <th>admin name</th>
             <th>admin email</th>
@@ -14,8 +15,8 @@
         @for(client <- listClient) {
             <tr>
                 <td>@client.getId</td>
-                <td>@client.getChannel</td>
-                <td>@client.getClientId</td>
+                <td>@client.getClientJid</td>
+                <td>@client.getSecret</td>
                 <td>@client.getName</td>
                 <td>@client.getAdminName</td>
                 <td>@client.getAdminEmail</td>

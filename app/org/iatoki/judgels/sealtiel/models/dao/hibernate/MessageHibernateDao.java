@@ -6,4 +6,8 @@ import org.iatoki.judgels.sealtiel.models.domains.MessageModel;
 
 public class MessageHibernateDao extends AbstractJudgelsHibernateDao<MessageModel> implements MessageDao {
 
+    public MessageHibernateDao() {
+        super(MessageModel.class);
+    }
+
 }
