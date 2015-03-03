@@ -5,10 +5,10 @@ version := "1.0-SNAPSHOT"
 lazy val main = (project in file("."))
                   .enablePlugins(PlayJava)
                   .disablePlugins(plugins.JUnitXmlReportPlugin)
-                  .dependsOn(commons)
-                  .aggregate(commons)
+                  .dependsOn(playcommons)
+                  .aggregate(playcommons)
 
-lazy val commons = RootProject(file("../judgels-play-commons"))
+lazy val playcommons = RootProject(file("../judgels-play-commons"))
 
 scalaVersion := "2.11.1"
 
