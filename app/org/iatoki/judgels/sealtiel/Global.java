@@ -8,13 +8,11 @@ import org.iatoki.judgels.sealtiel.models.dao.hibernate.MessageHibernateDao;
 import org.iatoki.judgels.sealtiel.models.dao.interfaces.ClientDao;
 import org.iatoki.judgels.sealtiel.models.dao.interfaces.MessageDao;
 import play.Application;
-import play.Play;
 import play.libs.F;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,26 +23,6 @@ public class Global extends org.iatoki.judgels.commons.Global {
     @Override
     public void onStart(Application app) {
         cache = new HashMap<>();
-
-        boolean result = false;
-
-        File file = new File(Play.application().configuration().getString("dir.conf"));
-        if (!file.exists()) {
-            file.mkdirs();
-            file.setWritable(true);
-        }
-        result = file.canWrite();
-
-        file = new File(Play.application().configuration().getString("dir.sealtiel"));
-        if (!file.exists()) {
-            file.mkdirs();
-            file.setWritable(true);
-        }
-
-        if (!result) {
-            System.out.println("Sealtiel can't start, please createMessage directory \""+Play.application().configuration().getString("dir.judgels")+"\" and make sure it is writable.");
-            System.exit(0);
-        }
 
         super.onStart(app);
     }
