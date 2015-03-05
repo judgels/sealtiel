@@ -18,7 +18,7 @@ libraryDependencies ++= Seq(
   cache,
   "org.hibernate" % "hibernate-entitymanager" % "4.3.7.Final",
 //  "org.hibernate" % "hibernate-jpamodelgen" % "4.3.7.Final",
-  "org.iatoki.judgels.sealtiel" % "sealtiel-message" % "1.0.3",
+  "org.iatoki.judgels.sealtiel" % "sealtiel-message" % "1.0.4s",
   "commons-io" % "commons-io" % "2.4",
   "com.rabbitmq" % "amqp-client" % "3.2.2",
   "com.google.code.gson" % "gson" % "2.2.4",
