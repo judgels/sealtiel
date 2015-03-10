@@ -2,7 +2,7 @@ name := """sealtiel"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val main = (project in file("."))
+lazy val sealtiel = (project in file("."))
                   .enablePlugins(PlayJava)
                   .disablePlugins(plugins.JUnitXmlReportPlugin)
                   .dependsOn(playcommons)
@@ -18,7 +18,7 @@ libraryDependencies ++= Seq(
   cache,
   "org.hibernate" % "hibernate-entitymanager" % "4.3.7.Final",
 //  "org.hibernate" % "hibernate-jpamodelgen" % "4.3.7.Final",
-  "org.iatoki.judgels.sealtiel" % "sealtiel-message" % "1.0.4s",
+  "org.iatoki.judgels.sealtiel" % "sealtiel-message" % "1.0.4",
   "commons-io" % "commons-io" % "2.4",
   "com.rabbitmq" % "amqp-client" % "3.2.2",
   "com.google.code.gson" % "gson" % "2.2.4",
