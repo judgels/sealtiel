@@ -13,11 +13,11 @@ GET     /logout                             @org.iatoki.judgels.sealtiel.control
 GET     /connection                         @org.iatoki.judgels.sealtiel.controllers.ApplicationController.checkRabbitmqConnection()
 
 GET     /clients/                           @org.iatoki.judgels.sealtiel.controllers.ClientController.index()
-GET     /clients/add                        @org.iatoki.judgels.sealtiel.controllers.ClientController.create()
-POST    /clients/add                        @org.iatoki.judgels.sealtiel.controllers.ClientController.doCreate()
-GET     /clients/:clientId                  @org.iatoki.judgels.sealtiel.controllers.ClientController.view(clientId: Long)
-POST    /clients/:clientId/addAcq           @org.iatoki.judgels.sealtiel.controllers.ClientController.addAcquaintance(clientId: Long)
-GET     /clients/:clientId/remove/:channel  @org.iatoki.judgels.sealtiel.controllers.ClientController.removeAcquaintance(clientId: Long, channel: String)
+GET     /clients/create                     @org.iatoki.judgels.sealtiel.controllers.ClientController.createClient()
+POST    /clients/add                        @org.iatoki.judgels.sealtiel.controllers.ClientController.doCreateClient()
+GET     /clients/:clientId                  @org.iatoki.judgels.sealtiel.controllers.ClientController.viewClient(clientId: Long)
+POST    /clients/:clientId/addAcq           @org.iatoki.judgels.sealtiel.controllers.ClientController.addClientAcquaintance(clientId: Long)
+GET     /clients/:clientId/remove/:channel  @org.iatoki.judgels.sealtiel.controllers.ClientController.removeClientAcquaintance(clientId: Long, channel: String)
 
 # Services
 POST    /services/get_message               @org.iatoki.judgels.sealtiel.controllers.MessageController.getMessage()

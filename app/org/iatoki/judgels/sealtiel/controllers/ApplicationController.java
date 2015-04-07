@@ -3,20 +3,16 @@ package org.iatoki.judgels.sealtiel.controllers;
 import com.google.common.collect.ImmutableList;
 import org.iatoki.judgels.commons.InternalLink;
 import org.iatoki.judgels.commons.LazyHtml;
-import org.iatoki.judgels.commons.views.html.layouts.baseLayout;
-import org.iatoki.judgels.commons.views.html.layouts.headerFooterLayout;
-import org.iatoki.judgels.commons.views.html.layouts.leftSidebarWithoutProfileLayout;
-import org.iatoki.judgels.commons.views.html.layouts.noSidebarLayout;
+import org.iatoki.judgels.commons.views.html.layouts.centerLayout;
+import org.iatoki.judgels.commons.views.html.layouts.sidebarWithoutProfileLayout;
 import org.iatoki.judgels.sealtiel.LoginForm;
 import org.iatoki.judgels.sealtiel.RabbitmqConnection;
+import org.iatoki.judgels.sealtiel.views.html.connectionView;
+import org.iatoki.judgels.sealtiel.views.html.indexView;
 import play.data.Form;
 import play.i18n.Messages;
 import play.mvc.Controller;
-import play.mvc.Http;
 import play.mvc.Result;
-
-import org.iatoki.judgels.sealtiel.views.html.indexView;
-import org.iatoki.judgels.sealtiel.views.html.connectionView;
 
 public class ApplicationController extends Controller {
 
@@ -26,11 +22,10 @@ public class ApplicationController extends Controller {
 
     private Result showLogin(Form<LoginForm> form) {
         LazyHtml content = new LazyHtml(indexView.render(form));
-        content.appendLayout(c -> noSidebarLayout.render(c));
-        content.appendLayout(c -> headerFooterLayout.render(c));
-        content.appendLayout(c -> baseLayout.render("TODO", c));
+        content.appendLayout(c -> centerLayout.render(c));
+        ControllerUtils.getInstance().appendTemplateLayout(content, "Login");
 
-        return lazyOk(content);
+        return ControllerUtils.getInstance().lazyOk(content);
     }
 
     public Result index() {
@@ -62,29 +57,13 @@ public class ApplicationController extends Controller {
         boolean status = rabbitmqConnection.isConnected();
 
         LazyHtml content = new LazyHtml(connectionView.render(status));
-        content.appendLayout(c -> leftSidebarWithoutProfileLayout.render(ImmutableList.of(
+        content.appendLayout(c -> sidebarWithoutProfileLayout.render(ImmutableList.of(
                         new InternalLink(Messages.get("client.clients"), routes.ClientController.index()),
                         new InternalLink(Messages.get("system.connection"), routes.ApplicationController.checkRabbitmqConnection())
                 ), c)
         );
-        content.appendLayout(c -> headerFooterLayout.render(c));
-        content.appendLayout(c -> baseLayout.render("TODO", c));
+        ControllerUtils.getInstance().appendTemplateLayout(content, "System - Rabbitmq");
 
-        return lazyOk(content);
-    }
-
-    private Result lazyOk(LazyHtml content) {
-        return getResult(content, Http.Status.OK);
-    }
-
-    private Result getResult(LazyHtml content, int statusCode) {
-        switch (statusCode) {
-            case Http.Status.OK:
-                return ok(content.render(0));
-            case Http.Status.NOT_FOUND:
-                return notFound(content.render(0));
-            default:
-                return badRequest(content.render(0));
-        }
+        return ControllerUtils.getInstance().lazyOk(content);
     }
 }

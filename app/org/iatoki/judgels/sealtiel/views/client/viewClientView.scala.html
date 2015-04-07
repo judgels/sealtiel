@@ -3,7 +3,7 @@
 <h1><i class="fa fa-desktop"></i> @client.getName</h1>
 <hr>
 <div class="row">
-	@helper.form(action = org.iatoki.judgels.sealtiel.controllers.routes.ClientController.addAcquaintance(client.getId)) {
+	@helper.form(action = org.iatoki.judgels.sealtiel.controllers.routes.ClientController.addClientAcquaintance(client.getId)) {
 		<div class="col-md-3">
 			<select name="acquaintance" class="form-control">
 				@for(client <- listClients) {
@@ -31,7 +31,7 @@
 				<td>@acquaintance.getClientJid</td>
 				<td>@acquaintance.getName</td>
 				<td>
-					<a href="@org.iatoki.judgels.sealtiel.controllers.routes.ClientController.removeAcquaintance(client.getId, acquaintance.getClientJid)"><i class="fa fa-times"></i> Remove</a>
+					<a href="@org.iatoki.judgels.sealtiel.controllers.routes.ClientController.removeClientAcquaintance(client.getId, acquaintance.getClientJid)"><i class="fa fa-times"></i> Remove</a>
 				</td>
 			</tr>
 		}
