@@ -1,5 +1,6 @@
 package org.iatoki.judgels.sealtiel;
 
+import play.Play;
 import play.data.validation.Constraints;
 
 public class LoginForm {
@@ -10,7 +11,7 @@ public class LoginForm {
     public String password;
 
     public String validate() {
-        if (("sealtiel".equals(username)) && ("rahasiasealtiel".equals(password))) {
+        if ((Play.application().configuration().getString("sealtiel.username").equals(username)) && (Play.application().configuration().getString("sealtiel.password").equals(password))) {
             return null;
         } else {
             return "Username atau sandi salah.";
