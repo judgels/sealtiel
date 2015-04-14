@@ -1,6 +1,6 @@
 name := """sealtiel"""
 
-version := "0.2.0"
+version := "0.2.1"
 
 lazy val sealtiel = (project in file("."))
                   .enablePlugins(PlayJava)
