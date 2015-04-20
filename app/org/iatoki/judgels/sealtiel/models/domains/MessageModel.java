@@ -20,7 +20,7 @@ public class MessageModel extends AbstractJudgelsModel {
 
     public String messageType;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "LONGTEXT")
     public String message;
 
     public int priority;
