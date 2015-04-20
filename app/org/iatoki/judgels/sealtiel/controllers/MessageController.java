@@ -18,6 +18,7 @@ import org.iatoki.judgels.sealtiel.client.ClientMessage;
 import play.Logger;
 import play.data.DynamicForm;
 import play.db.jpa.Transactional;
+import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -48,18 +49,13 @@ public class MessageController extends Controller {
         unconfirmedMessage = UnconfirmedMessage.getInstance();
     }
 
+    @BodyParser.Of(value = BodyParser.FormUrlEncoded.class, maxLength = 512 * 1024 * 1024)
     public Result sendMessage() {
         DynamicForm params = DynamicForm.form().bindFromRequest();
         String clientJid = params.get("clientJid");
         String clientSecret = params.get("clientSecret");
-        System.out.println(clientJid+ " " +clientSecret);
         Client client = clientService.findClientByClientJid(clientJid);
         if (client.getSecret().equals(clientSecret)) {
-            Logger.info("================================================");
-            Logger.info("SEND MESSAGE");
-            Logger.info("================================================");
-
-
             try {
                 Gson gson = GsonWrapper.getInstance();
 
@@ -113,9 +109,6 @@ public class MessageController extends Controller {
         Client client = clientService.findClientByClientJid(clientJid);
 
         if (client.getSecret().equals(clientSecret)) {
-            Logger.info("================================================");
-            Logger.info("GET MESSAGE");
-
             String result = "";
 
             Channel channel = RabbitmqConnection.getInstance().getChannel();
@@ -138,7 +131,6 @@ public class MessageController extends Controller {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Logger.info("================================================");
 
             if (!"".equals(result)) {
                 return ok(result);
@@ -157,9 +149,6 @@ public class MessageController extends Controller {
         Client client = clientService.findClientByClientJid(clientJid);
 
         if (client.getSecret().equals(clientSecret)) {
-            Logger.info("================================================");
-            Logger.info("CONFIRM MESSAGE "+params.get("messageId"));
-
             Channel channel = RabbitmqConnection.getInstance().getChannel();
 
             try {
@@ -170,11 +159,9 @@ public class MessageController extends Controller {
                 }
                 unconfirmedMessage.put(messageId, null);
                 requeuers.put(messageId, null);
-                Logger.info("================================================");
                 return ok();
             } catch (IOException e) {
                 e.printStackTrace();
-                Logger.info("================================================");
                 return notFound();
             }
         } else {
@@ -189,10 +176,6 @@ public class MessageController extends Controller {
         Client client = clientService.findClientByClientJid(clientJid);
 
         if (client.getSecret().equals(clientSecret)) {
-            Logger.info("================================================");
-            Logger.info("SEND RPC MESSAGE");
-            Logger.info("================================================");
-
             String result = "";
 
             try {
@@ -251,9 +234,6 @@ public class MessageController extends Controller {
         Client client = clientService.findClientByClientJid(clientJid);
 
         if (client.getSecret().equals(clientSecret)) {
-            Logger.info("================================================");
-            Logger.info("EXTEND TIMEOUT " + params.get("messageId"));
-
             Channel channel = RabbitmqConnection.getInstance().getChannel();
 
             try {
@@ -263,11 +243,9 @@ public class MessageController extends Controller {
                     requeuers.get(messageId).cancel(true);
                     requeuers.put(messageId, executorService.schedule(new Requeuer(messageId), 15, TimeUnit.MINUTES));
                 }
-                Logger.info("================================================");
                 return ok();
             } catch (IOException e) {
                 e.printStackTrace();
-                Logger.info("================================================");
                 return notFound();
             }
         } else {
