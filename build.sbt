@@ -9,7 +9,7 @@ lazy val sealtiel = (project in file("."))
     .aggregate(playcommons)
     .settings(
         name := "sealtiel",
-        version := "0.2.1",
+        version := IO.read(file("version.properties")),
         scalaVersion := "2.11.1",
         resolvers += "IA TOKI Artifactory" at "http://artifactory.ia-toki.org/artifactory/repo",
         libraryDependencies ++= Seq(
