@@ -1,5 +1,6 @@
 package org.iatoki.judgels.sealtiel;
 
+import org.iatoki.judgels.commons.JudgelsProperties;
 import org.iatoki.judgels.sealtiel.controllers.ApplicationController;
 import org.iatoki.judgels.sealtiel.controllers.ClientController;
 import org.iatoki.judgels.sealtiel.controllers.MessageController;
@@ -18,11 +19,16 @@ import java.util.Map;
 
 public class Global extends org.iatoki.judgels.commons.Global {
 
-    private Map<Class, Controller> cache;
+    private final Map<Class, Controller> cache;
+
+    public Global() {
+        cache = new HashMap<>();
+    }
 
     @Override
     public void onStart(Application app) {
-        cache = new HashMap<>();
+        org.iatoki.judgels.sealtiel.BuildInfo$ buildInfo = org.iatoki.judgels.sealtiel.BuildInfo$.MODULE$;
+        JudgelsProperties.buildInstance(buildInfo.name(), buildInfo.version());
 
         super.onStart(app);
     }
