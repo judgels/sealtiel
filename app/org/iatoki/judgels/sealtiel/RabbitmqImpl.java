@@ -5,6 +5,7 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.GetResponse;
 import com.rabbitmq.client.MessageProperties;
 
 import java.io.IOException;
@@ -64,7 +65,12 @@ public final class RabbitmqImpl implements QueueService {
         if (!isConnected()) {
             createConnection();
         }
-        return null;
+        GetResponse delivery = channel.basicGet(queueName, false);
+        if (delivery != null) {
+            return new QueueMessage(delivery.getEnvelope().getDeliveryTag(), new String(delivery.getBody()));
+        } else {
+            return null;
+        }
     }
 
     @Override
