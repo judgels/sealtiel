@@ -7,7 +7,7 @@ import play.Play;
 
 import java.io.IOException;
 
-public class RabbitmqConnection {
+public final class RabbitmqConnection {
     private static RabbitmqConnection INSTANCE;
 
     private ConnectionFactory factory;

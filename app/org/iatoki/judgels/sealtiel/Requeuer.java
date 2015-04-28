@@ -4,9 +4,9 @@ import com.rabbitmq.client.Channel;
 
 import java.io.IOException;
 
-public class Requeuer implements Runnable {
+public final class Requeuer implements Runnable {
 
-    private long messageId;
+    private final long messageId;
 
     public Requeuer(long messageId) {
         this.messageId = messageId;

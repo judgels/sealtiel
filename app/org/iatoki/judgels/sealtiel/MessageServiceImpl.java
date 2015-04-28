@@ -4,9 +4,9 @@ import org.iatoki.judgels.commons.IdentityUtils;
 import org.iatoki.judgels.sealtiel.models.dao.interfaces.MessageDao;
 import org.iatoki.judgels.sealtiel.models.domains.MessageModel;
 
-public class MessageServiceImpl implements MessageService {
+public final class MessageServiceImpl implements MessageService {
 
-    private MessageDao messageDao;
+    private final MessageDao messageDao;
 
     public MessageServiceImpl(MessageDao messageDao) {
         this.messageDao = messageDao;

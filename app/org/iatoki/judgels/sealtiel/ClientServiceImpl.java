@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class ClientServiceImpl implements ClientService {
+public final class ClientServiceImpl implements ClientService {
 
-    private ClientDao clientDao;
+    private final ClientDao clientDao;
 
     public ClientServiceImpl(ClientDao clientDao) {
         this.clientDao = clientDao;

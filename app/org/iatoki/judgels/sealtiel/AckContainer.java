@@ -2,7 +2,7 @@ package org.iatoki.judgels.sealtiel;
 
 import com.rabbitmq.client.QueueingConsumer;
 
-public class AckContainer {
+public final class AckContainer {
     public QueueingConsumer consumer;
     public long deliveryTag;
 

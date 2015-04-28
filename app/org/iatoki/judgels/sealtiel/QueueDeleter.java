@@ -4,9 +4,9 @@ import com.rabbitmq.client.Channel;
 
 import java.io.IOException;
 
-public class QueueDeleter implements Runnable {
+public final class QueueDeleter implements Runnable {
 
-    private String queueName;
+    private final String queueName;
 
     public QueueDeleter(String queueName) {
         this.queueName = queueName;

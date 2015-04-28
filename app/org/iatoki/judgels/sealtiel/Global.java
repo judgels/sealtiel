@@ -3,7 +3,7 @@ package org.iatoki.judgels.sealtiel;
 import org.iatoki.judgels.commons.JudgelsProperties;
 import org.iatoki.judgels.sealtiel.controllers.ApplicationController;
 import org.iatoki.judgels.sealtiel.controllers.ClientController;
-import org.iatoki.judgels.sealtiel.controllers.MessageController;
+import org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController;
 import org.iatoki.judgels.sealtiel.models.dao.hibernate.ClientHibernateDao;
 import org.iatoki.judgels.sealtiel.models.dao.hibernate.MessageHibernateDao;
 import org.iatoki.judgels.sealtiel.models.dao.interfaces.ClientDao;
@@ -17,7 +17,7 @@ import play.mvc.Result;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Global extends org.iatoki.judgels.commons.Global {
+public final class Global extends org.iatoki.judgels.commons.Global {
 
     private final Map<Class, Controller> cache;
 
@@ -42,24 +42,18 @@ public class Global extends org.iatoki.judgels.commons.Global {
                 ClientController clientController = new ClientController(clientService);
 
                 cache.put(ClientController.class, clientController);
-            } else if (controllerClass.equals(MessageController.class)) {
+            } else if (controllerClass.equals(MessageAPIController.class)) {
                 MessageDao messageDao = new MessageHibernateDao();
                 MessageService messageService = new MessageServiceImpl(messageDao);
                 ClientDao clientDao = new ClientHibernateDao();
                 ClientService clientService = new ClientServiceImpl(clientDao);
-                MessageController messageController = new MessageController(messageService, clientService, 10);
+                MessageAPIController messageController = new MessageAPIController(messageService, clientService, 10);
 
-                cache.put(MessageController.class, messageController);
+                cache.put(MessageAPIController.class, messageController);
             } else if (controllerClass.equals(ApplicationController.class)) {
                 cache.put(ApplicationController.class, new ApplicationController());
             }
         }
         return controllerClass.cast(cache.get(controllerClass));
-    }
-
-    @Override
-    public F.Promise<Result> onHandlerNotFound(Http.RequestHeader requestHeader) {
-        System.out.println(requestHeader.path());
-        return super.onHandlerNotFound(requestHeader);
     }
 }

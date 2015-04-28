@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "sealtiel_client")
 @JidPrefix("SECL")
-public class ClientModel extends AbstractJudgelsModel {
+public final class ClientModel extends AbstractJudgelsModel {
 
     public String secret;
 

@@ -3,8 +3,8 @@ package org.iatoki.judgels.sealtiel.controllers;
 import com.google.common.collect.ImmutableList;
 import org.iatoki.judgels.commons.InternalLink;
 import org.iatoki.judgels.commons.LazyHtml;
+import org.iatoki.judgels.commons.controllers.BaseController;
 import org.iatoki.judgels.commons.views.html.layouts.centerLayout;
-import org.iatoki.judgels.commons.views.html.layouts.sidebarWithoutProfileLayout;
 import org.iatoki.judgels.sealtiel.LoginForm;
 import org.iatoki.judgels.sealtiel.RabbitmqConnection;
 import org.iatoki.judgels.sealtiel.views.html.connectionView;
@@ -14,7 +14,7 @@ import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-public class ApplicationController extends Controller {
+public final class ApplicationController extends BaseController {
 
     public ApplicationController() {
 
@@ -57,11 +57,7 @@ public class ApplicationController extends Controller {
         boolean status = rabbitmqConnection.isConnected();
 
         LazyHtml content = new LazyHtml(connectionView.render(status));
-        content.appendLayout(c -> sidebarWithoutProfileLayout.render(ImmutableList.of(
-                        new InternalLink(Messages.get("client.clients"), routes.ClientController.index()),
-                        new InternalLink(Messages.get("system.connection"), routes.ApplicationController.checkRabbitmqConnection())
-                ), c)
-        );
+        ControllerUtils.getInstance().appendSidebarLayout(content);
         ControllerUtils.getInstance().appendTemplateLayout(content, "System - Rabbitmq");
 
         return ControllerUtils.getInstance().lazyOk(content);

@@ -14,7 +14,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import java.util.Collection;
 import java.util.List;
 
-public class ClientHibernateDao extends AbstractJudgelsHibernateDao<ClientModel> implements ClientDao {
+public final class ClientHibernateDao extends AbstractJudgelsHibernateDao<ClientModel> implements ClientDao {
 
     public ClientHibernateDao() {
         super(ClientModel.class);

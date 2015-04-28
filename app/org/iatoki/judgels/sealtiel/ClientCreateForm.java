@@ -2,7 +2,7 @@ package org.iatoki.judgels.sealtiel;
 
 import play.data.validation.Constraints;
 
-public class ClientCreateForm {
+public final class ClientCreateForm {
     @Constraints.Required
     public String appName;
 

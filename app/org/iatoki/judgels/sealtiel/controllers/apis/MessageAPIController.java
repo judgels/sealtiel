@@ -1,4 +1,4 @@
-package org.iatoki.judgels.sealtiel.controllers;
+package org.iatoki.judgels.sealtiel.controllers.apis;
 
 import com.google.gson.Gson;
 import com.rabbitmq.client.AMQP;
@@ -33,7 +33,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @Transactional
-public class MessageController extends Controller {
+public final class MessageAPIController extends Controller {
 
     private ScheduledThreadPoolExecutor executorService;
     private Map<Long, ScheduledFuture> requeuers;
@@ -41,7 +41,7 @@ public class MessageController extends Controller {
     private MessageService messageService;
     private ClientService clientService;
 
-    public MessageController(MessageService messageService, ClientService clientService, int threadPool) {
+    public MessageAPIController(MessageService messageService, ClientService clientService, int threadPool) {
         this.messageService = messageService;
         this.clientService = clientService;
         executorService = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(threadPool);

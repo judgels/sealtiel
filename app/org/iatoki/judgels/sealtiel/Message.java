@@ -1,15 +1,15 @@
 package org.iatoki.judgels.sealtiel;
 
-public class Message {
+public final class Message {
 
-    private long id;
-    private String sourceClientJid;
-    private String sourceIPAddress;
-    private String targetClientJid;
-    private String messageType;
-    private String message;
-    private long timestamp;
-    private int priority;
+    private final long id;
+    private final String sourceClientJid;
+    private final String sourceIPAddress;
+    private final String targetClientJid;
+    private final String messageType;
+    private final String message;
+    private final long timestamp;
+    private final int priority;
 
     public Message(long id, String sourceClientJid, String sourceIPAddress, String targetClientJid, String messageType, String message, long timestamp, int priority) {
         this.id = id;

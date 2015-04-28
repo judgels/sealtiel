@@ -3,7 +3,7 @@
 # ~~~~
 
 # Imports
-->          /                          commons.Routes
+->      /                                   commons.Routes
 
 
 # Home page
@@ -20,11 +20,11 @@ POST    /clients/:clientId/addAcq           @org.iatoki.judgels.sealtiel.control
 GET     /clients/:clientId/remove/:channel  @org.iatoki.judgels.sealtiel.controllers.ClientController.removeClientAcquaintance(clientId: Long, channel: String)
 
 # Services
-POST    /services/get_message               @org.iatoki.judgels.sealtiel.controllers.MessageController.getMessage()
-POST    /services/send_message              @org.iatoki.judgels.sealtiel.controllers.MessageController.sendMessage()
-POST    /services/send_confirmation         @org.iatoki.judgels.sealtiel.controllers.MessageController.confirmMessage()
-POST    /services/send_rpc_message          @org.iatoki.judgels.sealtiel.controllers.MessageController.sendRPCMessage()
-POST    /services/extend_timeout            @org.iatoki.judgels.sealtiel.controllers.MessageController.extendTimeout()
+POST    /services/get_message               @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.getMessage()
+POST    /services/send_message              @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.sendMessage()
+POST    /services/send_confirmation         @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.confirmMessage()
+POST    /services/send_rpc_message          @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.sendRPCMessage()
+POST    /services/extend_timeout            @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.extendTimeout()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)

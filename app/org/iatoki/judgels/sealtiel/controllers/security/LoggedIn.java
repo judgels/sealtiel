@@ -1,10 +1,10 @@
-package org.iatoki.judgels.sealtiel;
+package org.iatoki.judgels.sealtiel.controllers.security;
 
 import play.mvc.Http.Context;
 import play.mvc.Result;
 import play.mvc.Security;
 
-public class LoggedIn extends Security.Authenticator {
+public final class LoggedIn extends Security.Authenticator {
 
     @Override
 	public String getUsername(Context ctx) {

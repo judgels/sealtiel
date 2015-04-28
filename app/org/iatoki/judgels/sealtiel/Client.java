@@ -4,23 +4,23 @@ import java.util.List;
 
 public class Client {
 
-    private long id;
+    private final long id;
 
-    private String clientJid;
+    private final String clientJid;
 
-    private String secret;
+    private final String secret;
 
-    private String name;
+    private final String name;
 
-    private String adminName;
+    private final String adminName;
 
-    private String adminEmail;
+    private final String adminEmail;
 
-    private List<String> acquaintances;
+    private final List<String> acquaintances;
 
-    private long totalDownload;
+    private final long totalDownload;
 
-    private long lastDownloadTime;
+    private final long lastDownloadTime;
 
     public Client(long id, String clientJid, String secret, String name, String adminName, String adminEmail, List<String> acquaintances, long totalDownload, long lastDownloadTime) {
         this.id = id;

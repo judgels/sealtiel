@@ -3,12 +3,13 @@ package org.iatoki.judgels.sealtiel.controllers;
 import com.google.common.collect.ImmutableList;
 import org.iatoki.judgels.commons.InternalLink;
 import org.iatoki.judgels.commons.LazyHtml;
+import org.iatoki.judgels.commons.controllers.BaseController;
 import org.iatoki.judgels.commons.views.html.layouts.headingLayout;
 import org.iatoki.judgels.commons.views.html.layouts.headingWithActionLayout;
 import org.iatoki.judgels.sealtiel.Client;
 import org.iatoki.judgels.sealtiel.ClientCreateForm;
 import org.iatoki.judgels.sealtiel.ClientService;
-import org.iatoki.judgels.sealtiel.LoggedIn;
+import org.iatoki.judgels.sealtiel.controllers.security.LoggedIn;
 import org.iatoki.judgels.sealtiel.views.html.client.createClientView;
 import org.iatoki.judgels.sealtiel.views.html.client.listClientsView;
 import org.iatoki.judgels.sealtiel.views.html.client.viewClientView;
@@ -23,7 +24,7 @@ import play.mvc.Security;
 import java.util.List;
 
 @Security.Authenticated(LoggedIn.class)
-public class ClientController extends Controller {
+public final class ClientController extends BaseController {
 
     private ClientService clientService;
 

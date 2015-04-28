@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "sealtiel_message")
 @JidPrefix("SEMS")
-public class MessageModel extends AbstractJudgelsModel {
+public final class MessageModel extends AbstractJudgelsModel {
 
     public String sourceClientJid;
 
