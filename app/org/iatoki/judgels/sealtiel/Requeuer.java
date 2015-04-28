@@ -1,24 +1,23 @@
 package org.iatoki.judgels.sealtiel;
 
-import com.rabbitmq.client.Channel;
-
 import java.io.IOException;
 
 public final class Requeuer implements Runnable {
 
+    private final QueueService queueService;
     private final long messageId;
 
-    public Requeuer(long messageId) {
+    public Requeuer(QueueService queueService, long messageId) {
+        this.queueService = queueService;
         this.messageId = messageId;
     }
 
     @Override
     public void run() {
         try {
-            Channel channel = RabbitmqConnection.getInstance().getChannel();
-            channel.basicNack(UnconfirmedMessage.getInstance().get(messageId), false, true);
+            queueService.requeueMessage(UnconfirmedMessage.getInstance().get(messageId));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }

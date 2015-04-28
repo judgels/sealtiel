@@ -50,6 +50,11 @@ public final class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public boolean existByClientJid(String clientJid) {
+        return clientDao.existsByJid(clientJid);
+    }
+
+    @Override
     public Client findClientByClientJid(String clientJid) {
         System.out.println(clientJid);
         ClientModel clientModel = clientDao.findByJid(clientJid);

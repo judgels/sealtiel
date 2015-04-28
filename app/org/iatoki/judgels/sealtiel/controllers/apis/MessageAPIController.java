@@ -1,21 +1,17 @@
 package org.iatoki.judgels.sealtiel.controllers.apis;
 
 import com.google.gson.Gson;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.GetResponse;
-import com.rabbitmq.client.MessageProperties;
 import org.iatoki.judgels.sealtiel.Client;
 import org.iatoki.judgels.sealtiel.ClientService;
 import org.iatoki.judgels.sealtiel.GsonWrapper;
 import org.iatoki.judgels.sealtiel.Message;
 import org.iatoki.judgels.sealtiel.MessageService;
 import org.iatoki.judgels.sealtiel.QueueDeleter;
-import org.iatoki.judgels.sealtiel.RabbitmqConnection;
+import org.iatoki.judgels.sealtiel.QueueMessage;
+import org.iatoki.judgels.sealtiel.QueueService;
 import org.iatoki.judgels.sealtiel.Requeuer;
 import org.iatoki.judgels.sealtiel.UnconfirmedMessage;
 import org.iatoki.judgels.sealtiel.client.ClientMessage;
-import play.Logger;
 import play.data.DynamicForm;
 import play.db.jpa.Transactional;
 import play.mvc.BodyParser;
@@ -35,15 +31,17 @@ import java.util.concurrent.TimeUnit;
 @Transactional
 public final class MessageAPIController extends Controller {
 
-    private ScheduledThreadPoolExecutor executorService;
-    private Map<Long, ScheduledFuture> requeuers;
-    private Map<Long, Long> unconfirmedMessage;
-    private MessageService messageService;
-    private ClientService clientService;
+    private final ScheduledThreadPoolExecutor executorService;
+    private final Map<Long, ScheduledFuture> requeuers;
+    private final Map<Long, Long> unconfirmedMessage;
+    private final MessageService messageService;
+    private final ClientService clientService;
+    private final QueueService queueService;
 
-    public MessageAPIController(MessageService messageService, ClientService clientService, int threadPool) {
+    public MessageAPIController(MessageService messageService, ClientService clientService, QueueService queueService, int threadPool) {
         this.messageService = messageService;
         this.clientService = clientService;
+        this.queueService = queueService;
         executorService = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(threadPool);
         requeuers = new HashMap();
         unconfirmedMessage = UnconfirmedMessage.getInstance();
@@ -54,48 +52,38 @@ public final class MessageAPIController extends Controller {
         DynamicForm params = DynamicForm.form().bindFromRequest();
         String clientJid = params.get("clientJid");
         String clientSecret = params.get("clientSecret");
-        Client client = clientService.findClientByClientJid(clientJid);
-        if (client.getSecret().equals(clientSecret)) {
-            try {
-                Gson gson = GsonWrapper.getInstance();
+        if (clientService.existByClientJid(clientJid)) {
+            Client client = clientService.findClientByClientJid(clientJid);
+            if (client.getSecret().equals(clientSecret)) {
+                try {
+                    Gson gson = GsonWrapper.getInstance();
 
-                ClientMessage clientMessage = gson.fromJson(params.get("message"), ClientMessage.class);
-                clientMessage.setSourceClientJid(client.getClientJid());
-                clientMessage.setSourceIPAddress(request().remoteAddress());
-                clientMessage.setTimestamp(System.currentTimeMillis() + "");
+                    ClientMessage clientMessage = gson.fromJson(params.get("message"), ClientMessage.class);
+                    clientMessage.setSourceClientJid(client.getClientJid());
+                    clientMessage.setSourceIPAddress(request().remoteAddress());
+                    clientMessage.setTimestamp(System.currentTimeMillis() + "");
 
-                Message message = messageService.createMessage(clientMessage.getId(), clientMessage.getSourceClientJid(), clientMessage.getSourceIPAddress(), clientMessage.getTargetClientJid(), clientMessage.getMessageType(), clientMessage.getMessage(), clientMessage.getPriority());
-                if (client.getAcquaintances().contains(clientMessage.getTargetClientJid())) {
-                    // target verified
+                    Message message = messageService.createMessage(clientMessage.getId(), clientMessage.getSourceClientJid(), clientMessage.getSourceIPAddress(), clientMessage.getTargetClientJid(), clientMessage.getMessageType(), clientMessage.getMessage(), clientMessage.getPriority());
+                    if (client.getAcquaintances().contains(clientMessage.getTargetClientJid())) {
+                        // target verified
 
-                    Channel channel = RabbitmqConnection.getInstance().getChannel();
-                    Map<String, Object> args = new HashMap<String, Object>();
-                    args.put("x-max-priority", 10);
-                    channel.queueDeclare(message.getTargetClientJid(), true, false, false, args);
+                        queueService.putMessageInQueue(message.getTargetClientJid(), Math.min(Math.max(message.getPriority(), 0), 10), gson.toJson(message).getBytes());
+                        return ok();
+                    } else if (clientService.findClientByClientJid(clientMessage.getTargetClientJid()) == null) {
+                        // either target is for RPC or in other nodes
 
-                    AMQP.BasicProperties props = MessageProperties.PERSISTENT_BASIC.builder().priority(message.getPriority()).build();
-                    channel.basicPublish("", message.getTargetClientJid(), props, gson.toJson(message).getBytes());
-                    return ok();
-                } else if (clientService.findClientByClientJid(clientMessage.getTargetClientJid()) == null) {
-                    // either target is for RPC or in other nodes
+                        queueService.putMessageInQueue(message.getTargetClientJid(), Math.min(Math.max(message.getPriority(), 0), 10), gson.toJson(message).getBytes());
+                        executorService.schedule(new QueueDeleter(queueService, message.getTargetClientJid()), 5, TimeUnit.MINUTES);
 
-                    Channel channel = RabbitmqConnection.getInstance().getChannel();
-                    Map<String, Object> args = new HashMap<>();
-                    args.put("x-max-priority", 10);
-                    channel.queueDeclare(message.getTargetClientJid(), true, false, false, args);
-
-                    AMQP.BasicProperties props = MessageProperties.PERSISTENT_BASIC.builder().priority(message.getPriority()).build();
-                    channel.basicPublish("", message.getTargetClientJid(), props, gson.toJson(message).getBytes());
-
-                    executorService.schedule(new QueueDeleter(message.getTargetClientJid()), 5, TimeUnit.MINUTES);
-
-                    return ok();
-                } else {
-                    return badRequest();
+                        return ok();
+                    } else {
+                        return badRequest();
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return notFound();
+            } else {
+                return forbidden();
             }
         } else {
             return notFound();
@@ -106,36 +94,34 @@ public final class MessageAPIController extends Controller {
         DynamicForm params = DynamicForm.form().bindFromRequest();
         String clientJid = params.get("clientJid");
         String clientSecret = params.get("clientSecret");
-        Client client = clientService.findClientByClientJid(clientJid);
 
-        if (client.getSecret().equals(clientSecret)) {
-            String result = "";
+        if (clientService.existByClientJid(clientJid)) {
+            Client client = clientService.findClientByClientJid(clientJid);
 
-            Channel channel = RabbitmqConnection.getInstance().getChannel();
+            if (client.getSecret().equals(clientSecret)) {
+                String result = "";
 
-            try {
-                channel.queueDeclare(client.getClientJid(), true, false, false, null);
+                try {
+                    QueueMessage queueMessage = queueService.getMessageFromQueue(client.getClientJid());
+                    if (queueMessage != null) {
+                        Gson gson = GsonWrapper.getInstance();
+                        ClientMessage clientMessage = gson.fromJson(queueMessage.getContent(), ClientMessage.class);
+                        unconfirmedMessage.put(clientMessage.getId(), queueMessage.getTag());
+                        requeuers.put(clientMessage.getId(), executorService.schedule(new Requeuer(queueService, clientMessage.getId()), 15, TimeUnit.MINUTES));
 
-                GetResponse delivery = channel.basicGet(client.getClientJid(), false);
-                if (delivery != null) {
-                    result = new String(delivery.getBody());
-
-                    Gson gson = GsonWrapper.getInstance();
-                    ClientMessage clientMessage = gson.fromJson(result, ClientMessage.class);
-
-                    unconfirmedMessage.put(clientMessage.getId(), delivery.getEnvelope().getDeliveryTag());
-                    requeuers.put(clientMessage.getId(), executorService.schedule(new Requeuer(clientMessage.getId()), 15, TimeUnit.MINUTES));
-                } else {
-                    Logger.debug("Result gagal");
+                        result = queueMessage.getContent();
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-            if (!"".equals(result)) {
-                return ok(result);
+                if (!"".equals(result)) {
+                    return ok(result);
+                } else {
+                    return notFound();
+                }
             } else {
-                return notFound();
+                return forbidden();
             }
         } else {
             return notFound();
@@ -146,23 +132,25 @@ public final class MessageAPIController extends Controller {
         DynamicForm params = DynamicForm.form().bindFromRequest();
         String clientJid = params.get("clientJid");
         String clientSecret = params.get("clientSecret");
-        Client client = clientService.findClientByClientJid(clientJid);
 
-        if (client.getSecret().equals(clientSecret)) {
-            Channel channel = RabbitmqConnection.getInstance().getChannel();
+        if (clientService.existByClientJid(clientJid)) {
+            Client client = clientService.findClientByClientJid(clientJid);
 
-            try {
-                long messageId = Long.parseLong(params.get("messageId"));
-                channel.basicAck(unconfirmedMessage.get(messageId), false);
-                if (requeuers.containsKey(messageId)) {
-                    requeuers.get(messageId).cancel(true);
+            if (client.getSecret().equals(clientSecret)) {
+                try {
+                    long messageId = Long.parseLong(params.get("messageId"));
+                    queueService.ackMessage(unconfirmedMessage.get(messageId));
+                    if (requeuers.containsKey(messageId)) {
+                        requeuers.get(messageId).cancel(true);
+                    }
+                    unconfirmedMessage.put(messageId, null);
+                    requeuers.put(messageId, null);
+                    return ok();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-                unconfirmedMessage.put(messageId, null);
-                requeuers.put(messageId, null);
-                return ok();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return notFound();
+            } else {
+                return forbidden();
             }
         } else {
             return notFound();
@@ -173,54 +161,50 @@ public final class MessageAPIController extends Controller {
         DynamicForm params = DynamicForm.form().bindFromRequest();
         String clientJid = params.get("clientJid");
         String clientSecret = params.get("clientSecret");
-        Client client = clientService.findClientByClientJid(clientJid);
 
-        if (client.getSecret().equals(clientSecret)) {
-            String result = "";
+        if (clientService.existByClientJid(clientJid)) {
+            Client client = clientService.findClientByClientJid(clientJid);
 
-            try {
-                Gson gson = GsonWrapper.getInstance();
+            if (client.getSecret().equals(clientSecret)) {
+                String result = "";
 
-                ClientMessage clientMessage = gson.fromJson(params.get("message"), ClientMessage.class);
-                clientMessage.setSourceClientJid(client.getClientJid());
-                clientMessage.setSourceIPAddress(request().remoteAddress());
-                clientMessage.setTimestamp(new Date().getTime() + "");
+                try {
+                    Gson gson = GsonWrapper.getInstance();
 
-                Message message = messageService.createMessage(clientMessage.getId(), clientMessage.getSourceClientJid(), clientMessage.getSourceIPAddress(), clientMessage.getTargetClientJid(), clientMessage.getMessageType(), clientMessage.getMessage(), clientMessage.getPriority());
-                if (client.getAcquaintances().contains(clientMessage.getTargetClientJid())) {
+                    ClientMessage clientMessage = gson.fromJson(params.get("message"), ClientMessage.class);
+                    clientMessage.setSourceClientJid(client.getClientJid());
+                    clientMessage.setSourceIPAddress(request().remoteAddress());
+                    clientMessage.setTimestamp(new Date().getTime() + "");
 
-                    Channel channel = RabbitmqConnection.getInstance().getChannel();
-                    Map<String, Object> args = new HashMap<String, Object>();
-                    args.put("x-max-priority", 10);
-                    channel.queueDeclare(message.getTargetClientJid(), true, false, false, args);
+                    Message message = messageService.createMessage(clientMessage.getId(), clientMessage.getSourceClientJid(), clientMessage.getSourceIPAddress(), clientMessage.getTargetClientJid(), clientMessage.getMessageType(), clientMessage.getMessage(), clientMessage.getPriority());
+                    if (client.getAcquaintances().contains(clientMessage.getTargetClientJid())) {
 
-                    UUID unique_queue = UUID.randomUUID();
-                    clientMessage.setSourceClientJid(unique_queue.toString());
-                    AMQP.BasicProperties props = MessageProperties.PERSISTENT_BASIC.builder().priority(10).build();
+                        UUID uniqueQueue = UUID.randomUUID();
+                        queueService.createQueue(uniqueQueue.toString());
 
-                    channel.basicPublish("", message.getTargetClientJid(), props, gson.toJson(message).getBytes());
+                        clientMessage.setSourceClientJid(uniqueQueue.toString());
+                        queueService.putMessageInQueue(message.getTargetClientJid(), Math.min(Math.max(message.getPriority(), 0), 10), gson.toJson(message).getBytes());
 
-                    channel.queueDeclare(unique_queue.toString(), true, false, false, null);
-                    GetResponse delivery = channel.basicGet(unique_queue.toString(), true);
-                    if (delivery != null) {
-                        result = new String(delivery.getBody());
+                        QueueMessage queueMessage = queueService.getMessageFromQueue(uniqueQueue.toString());
+                        if (queueMessage != null) {
+                            result = new String(queueMessage.getContent());
+                            queueService.deleteQueue(uniqueQueue.toString());
+                        }
 
-                        channel.queueDelete(unique_queue.toString());
+                        if (!"".equals(result)) {
+                            return ok(result);
+                        } else {
+                            return notFound();
+                        }
                     } else {
-                        Logger.debug("Result gagal");
+                        return badRequest();
                     }
-
-                    if (!"".equals(result)) {
-                        return ok(result);
-                    } else {
-                        return notFound();
-                    }
-                } else {
-                    return badRequest();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return notFound();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return notFound();
+            } else {
+                return forbidden();
             }
         } else {
             return notFound();
@@ -231,22 +215,25 @@ public final class MessageAPIController extends Controller {
         DynamicForm params = DynamicForm.form().bindFromRequest();
         String clientJid = params.get("clientJid");
         String clientSecret = params.get("clientSecret");
-        Client client = clientService.findClientByClientJid(clientJid);
 
-        if (client.getSecret().equals(clientSecret)) {
-            Channel channel = RabbitmqConnection.getInstance().getChannel();
+        if (clientService.existByClientJid(clientJid)) {
+            Client client = clientService.findClientByClientJid(clientJid);
 
-            try {
-                long messageId = Long.parseLong(params.get("messageId"));
-                channel.basicAck(unconfirmedMessage.get(messageId), false);
-                if (requeuers.containsKey(messageId)) {
-                    requeuers.get(messageId).cancel(true);
-                    requeuers.put(messageId, executorService.schedule(new Requeuer(messageId), 15, TimeUnit.MINUTES));
+            if (client.getSecret().equals(clientSecret)) {
+                try {
+                    long messageId = Long.parseLong(params.get("messageId"));
+                    queueService.ackMessage(unconfirmedMessage.get(messageId));
+
+                    if (requeuers.containsKey(messageId)) {
+                        requeuers.get(messageId).cancel(true);
+                        requeuers.put(messageId, executorService.schedule(new Requeuer(queueService, messageId), 15, TimeUnit.MINUTES));
+                    }
+                    return ok();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-                return ok();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return notFound();
+            } else {
+                return forbidden();
             }
         } else {
             return notFound();

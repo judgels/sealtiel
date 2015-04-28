@@ -4,7 +4,7 @@
 
 @implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-xs-2", "col-xs-10") }
 
-@b3.form(action = org.iatoki.judgels.sealtiel.controllers.routes.ClientController.doCreateClient()) {
+@b3.form(action = org.iatoki.judgels.sealtiel.controllers.routes.ClientController.postCreateClient()) {
     @b3.text(newClientForm("appName"), 'class->"form-control", '_label->Messages.get("appName"))
     @b3.text(newClientForm("adminName"), 'class->"form-control", '_label->Messages.get("adminName"))
     @b3.text(newClientForm("adminEmail"), 'class->"form-control", '_label->Messages.get("adminEmail"))

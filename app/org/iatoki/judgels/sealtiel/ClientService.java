@@ -7,6 +7,8 @@ public interface ClientService {
 
     List<Client> findAllClient();
 
+    boolean existByClientJid(String clientJid);
+
     Client findClientByClientId(long clientId);
 
     Client findClientByClientJid(String clientJid);

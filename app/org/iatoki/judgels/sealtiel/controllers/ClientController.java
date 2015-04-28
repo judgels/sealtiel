@@ -50,7 +50,7 @@ public final class ClientController extends BaseController {
     }
 
     @Transactional
-    public Result doCreateClient() {
+    public Result postCreateClient() {
         Form<ClientCreateForm> newClientForm = Form.form(ClientCreateForm.class).bindFromRequest();
         if (newClientForm.hasErrors()) {
             return showCreateClient(newClientForm);

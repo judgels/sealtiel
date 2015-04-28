@@ -1,18 +1,16 @@
 package org.iatoki.judgels.sealtiel.controllers;
 
-import com.google.common.collect.ImmutableList;
-import org.iatoki.judgels.commons.InternalLink;
 import org.iatoki.judgels.commons.LazyHtml;
 import org.iatoki.judgels.commons.controllers.BaseController;
 import org.iatoki.judgels.commons.views.html.layouts.centerLayout;
 import org.iatoki.judgels.sealtiel.LoginForm;
-import org.iatoki.judgels.sealtiel.RabbitmqConnection;
+import org.iatoki.judgels.sealtiel.RabbitmqImpl;
 import org.iatoki.judgels.sealtiel.views.html.connectionView;
 import org.iatoki.judgels.sealtiel.views.html.indexView;
 import play.data.Form;
-import play.i18n.Messages;
-import play.mvc.Controller;
 import play.mvc.Result;
+
+import java.io.IOException;
 
 public final class ApplicationController extends BaseController {
 
@@ -53,8 +51,16 @@ public final class ApplicationController extends BaseController {
     }
 
     public Result checkRabbitmqConnection() {
-        RabbitmqConnection rabbitmqConnection = RabbitmqConnection.getInstance();
-        boolean status = rabbitmqConnection.isConnected();
+        RabbitmqImpl rabbitmqImpl = RabbitmqImpl.getInstance();
+        boolean status = rabbitmqImpl.isConnected();
+        if (!status) {
+            try {
+                rabbitmqImpl.createConnection();
+            } catch (IOException e) {
+                // do nothing
+            }
+            status = rabbitmqImpl.isConnected();
+        }
 
         LazyHtml content = new LazyHtml(connectionView.render(status));
         ControllerUtils.getInstance().appendSidebarLayout(content);

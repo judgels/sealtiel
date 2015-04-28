@@ -9,7 +9,7 @@ GET     /connection                         @org.iatoki.judgels.sealtiel.control
 
 GET     /clients/                           @org.iatoki.judgels.sealtiel.controllers.ClientController.index()
 GET     /clients/create                     @org.iatoki.judgels.sealtiel.controllers.ClientController.createClient()
-POST    /clients/add                        @org.iatoki.judgels.sealtiel.controllers.ClientController.doCreateClient()
+POST    /clients/add                        @org.iatoki.judgels.sealtiel.controllers.ClientController.postCreateClient()
 GET     /clients/:clientId                  @org.iatoki.judgels.sealtiel.controllers.ClientController.viewClient(clientId: Long)
 POST    /clients/:clientId/addAcq           @org.iatoki.judgels.sealtiel.controllers.ClientController.addClientAcquaintance(clientId: Long)
 GET     /clients/:clientId/remove/:channel  @org.iatoki.judgels.sealtiel.controllers.ClientController.removeClientAcquaintance(clientId: Long, channel: String)
