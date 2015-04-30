@@ -1,6 +1,8 @@
 package org.iatoki.judgels.sealtiel;
 
 import com.google.common.collect.ImmutableMap;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import org.iatoki.judgels.commons.JudgelsProperties;
 import org.iatoki.judgels.sealtiel.controllers.ApplicationController;
 import org.iatoki.judgels.sealtiel.controllers.ClientController;
@@ -10,7 +12,6 @@ import org.iatoki.judgels.sealtiel.models.dao.hibernate.MessageHibernateDao;
 import org.iatoki.judgels.sealtiel.models.dao.interfaces.ClientDao;
 import org.iatoki.judgels.sealtiel.models.dao.interfaces.MessageDao;
 import play.Application;
-import play.Play;
 import play.libs.F;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -19,17 +20,13 @@ import play.mvc.Result;
 import java.util.Map;
 
 public class Global extends org.iatoki.judgels.commons.Global {
-    private static final String CONF_LOCATION = "conf/application.conf";
-
     private ClientDao clientDao;
     private MessageDao messageDao;
-
-    private SealtielProperties sealtielProps;
 
     private ClientService clientService;
     private MessageService messageService;
 
-    private Map<Class<?>, Controller> controllersCache;
+    private Map<Class<?>, Controller> controllersRegistry;
 
     @Override
     public void onStart(Application application) {
@@ -41,10 +38,7 @@ public class Global extends org.iatoki.judgels.commons.Global {
 
     @Override
     public <A> A getControllerInstance(Class<A> controllerClass) throws Exception {
-        @SuppressWarnings("unchecked")
-        A controller = (A) controllersCache.get(controllerClass);
-
-        return controller;
+        return controllerClass.cast(controllersRegistry.get(controllerClass));
     }
 
     private void buildDaos() {
@@ -53,11 +47,12 @@ public class Global extends org.iatoki.judgels.commons.Global {
     }
 
     private void buildProperties() {
-        org.iatoki.judgels.sealtiel.BuildInfo$ buildInfo = org.iatoki.judgels.sealtiel.BuildInfo$.MODULE$;
-        JudgelsProperties.buildInstance(buildInfo.name(), buildInfo.version(), Play.application().configuration(), CONF_LOCATION);
+        Config config = ConfigFactory.load();
 
-        SealtielProperties.buildInstance(Play.application().configuration(), CONF_LOCATION);
-        sealtielProps = SealtielProperties.getInstance();
+        org.iatoki.judgels.sealtiel.BuildInfo$ buildInfo = org.iatoki.judgels.sealtiel.BuildInfo$.MODULE$;
+        JudgelsProperties.buildInstance(buildInfo.name(), buildInfo.version(), config);
+
+        SealtielProperties.buildInstance(config);
     }
 
     private void buildServices() {
@@ -66,7 +61,7 @@ public class Global extends org.iatoki.judgels.commons.Global {
     }
 
     private void buildControllers() {
-        controllersCache = ImmutableMap.<Class<?>, Controller> builder()
+        controllersRegistry = ImmutableMap.<Class<?>, Controller> builder()
                 .put(ApplicationController.class, new ApplicationController())
                 .put(ClientController.class, new ClientController(clientService))
                 .put(MessageAPIController.class, new MessageAPIController(messageService, clientService, 10))

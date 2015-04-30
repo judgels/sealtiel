@@ -1,12 +1,11 @@
 package org.iatoki.judgels.sealtiel;
 
-import play.Configuration;
+import com.typesafe.config.Config;
 
 public final class SealtielProperties {
     private static SealtielProperties INSTANCE;
 
-    private final Configuration conf;
-    private final String confLocation;
+    private final Config config;
 
     private String sealtielUsername;
     private String sealtielPassword;
@@ -17,17 +16,16 @@ public final class SealtielProperties {
     private String rabbitmqPassword;
     private String rabbitmqVirtualHost;
 
-    private SealtielProperties(Configuration conf, String confLocation) {
-        this.conf = conf;
-        this.confLocation = confLocation;
+    private SealtielProperties(Config config) {
+        this.config = config;
     }
 
-    public static synchronized void buildInstance(Configuration conf, String confLocation) {
+    public static synchronized void buildInstance(Config config) {
         if (INSTANCE != null) {
             throw new UnsupportedOperationException("SealtielProperties instance has already been built");
         }
 
-        INSTANCE = new SealtielProperties(conf, confLocation);
+        INSTANCE = new SealtielProperties(config);
         INSTANCE.build();
     }
 
@@ -78,26 +76,24 @@ public final class SealtielProperties {
     }
 
     private String getStringValue(String key) {
-        return conf.getString(key);
+        if (!config.hasPath(key)) {
+            return null;
+        }
+        return config.getString(key);
     }
 
     private String requireStringValue(String key) {
-        String value = getStringValue(key);
-        if (value == null) {
-            throw new RuntimeException("Missing " + key + " property in " + confLocation);
-        }
-        return value;
+        return config.getString(key);
     }
 
     private Integer getIntegerValue(String key) {
-        return conf.getInt(key);
+        if (!config.hasPath(key)) {
+            return null;
+        }
+        return config.getInt(key);
     }
 
     private int requireIntegerValue(String key) {
-        Integer value = getIntegerValue(key);
-        if (value == null) {
-            throw new RuntimeException("Missing " + key + " property in " + confLocation);
-        }
-        return value;
+        return config.getInt(key);
     }
 }
