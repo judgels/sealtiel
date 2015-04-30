@@ -11,7 +11,7 @@ public class LoginForm {
     public String password;
 
     public String validate() {
-        if ((Play.application().configuration().getString("sealtiel.username").equals(username)) && (Play.application().configuration().getString("sealtiel.password").equals(password))) {
+        if ((SealtielProperties.getInstance().getSealtielUsername().equals(username)) && (SealtielProperties.getInstance().getSealtielPassword().equals(password))) {
             return null;
         } else {
             return "Username atau sandi salah.";

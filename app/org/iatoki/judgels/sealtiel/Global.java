@@ -1,5 +1,6 @@
 package org.iatoki.judgels.sealtiel;
 
+import com.google.common.collect.ImmutableMap;
 import org.iatoki.judgels.commons.JudgelsProperties;
 import org.iatoki.judgels.sealtiel.controllers.ApplicationController;
 import org.iatoki.judgels.sealtiel.controllers.ClientController;
@@ -9,51 +10,72 @@ import org.iatoki.judgels.sealtiel.models.dao.hibernate.MessageHibernateDao;
 import org.iatoki.judgels.sealtiel.models.dao.interfaces.ClientDao;
 import org.iatoki.judgels.sealtiel.models.dao.interfaces.MessageDao;
 import play.Application;
+import play.Play;
 import play.libs.F;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public final class Global extends org.iatoki.judgels.commons.Global {
+public class Global extends org.iatoki.judgels.commons.Global {
+    private static final String CONF_LOCATION = "conf/application.conf";
 
-    private final Map<Class, Controller> cache;
+    private ClientDao clientDao;
+    private MessageDao messageDao;
 
-    public Global() {
-        cache = new HashMap<>();
-    }
+    private SealtielProperties sealtielProps;
+
+    private ClientService clientService;
+    private MessageService messageService;
+
+    private Map<Class<?>, Controller> controllersCache;
 
     @Override
-    public void onStart(Application app) {
-        org.iatoki.judgels.sealtiel.BuildInfo$ buildInfo = org.iatoki.judgels.sealtiel.BuildInfo$.MODULE$;
-        JudgelsProperties.buildInstance(buildInfo.name(), buildInfo.version());
-
-        super.onStart(app);
+    public void onStart(Application application) {
+        buildDaos();
+        buildProperties();
+        buildServices();
+        buildControllers();
     }
 
     @Override
     public <A> A getControllerInstance(Class<A> controllerClass) throws Exception {
-        if (!cache.containsKey(controllerClass)) {
-            if (controllerClass.equals(ClientController.class)) {
-                ClientDao clientDao = new ClientHibernateDao();
-                ClientService clientService = new ClientServiceImpl(clientDao);
-                ClientController clientController = new ClientController(clientService);
+        @SuppressWarnings("unchecked")
+        A controller = (A) controllersCache.get(controllerClass);
 
-                cache.put(ClientController.class, clientController);
-            } else if (controllerClass.equals(MessageAPIController.class)) {
-                MessageDao messageDao = new MessageHibernateDao();
-                MessageService messageService = new MessageServiceImpl(messageDao);
-                ClientDao clientDao = new ClientHibernateDao();
-                ClientService clientService = new ClientServiceImpl(clientDao);
-                MessageAPIController messageController = new MessageAPIController(messageService, clientService, 10);
+        return controller;
+    }
 
-                cache.put(MessageAPIController.class, messageController);
-            } else if (controllerClass.equals(ApplicationController.class)) {
-                cache.put(ApplicationController.class, new ApplicationController());
-            }
-        }
-        return controllerClass.cast(cache.get(controllerClass));
+    private void buildDaos() {
+        clientDao = new ClientHibernateDao();
+        messageDao = new MessageHibernateDao();
+    }
+
+    private void buildProperties() {
+        org.iatoki.judgels.sealtiel.BuildInfo$ buildInfo = org.iatoki.judgels.sealtiel.BuildInfo$.MODULE$;
+        JudgelsProperties.buildInstance(buildInfo.name(), buildInfo.version(), Play.application().configuration(), CONF_LOCATION);
+
+        SealtielProperties.buildInstance(Play.application().configuration(), CONF_LOCATION);
+        sealtielProps = SealtielProperties.getInstance();
+    }
+
+    private void buildServices() {
+        clientService = new ClientServiceImpl(clientDao);
+        messageService = new MessageServiceImpl(messageDao);
+    }
+
+    private void buildControllers() {
+        controllersCache = ImmutableMap.<Class<?>, Controller> builder()
+                .put(ApplicationController.class, new ApplicationController())
+                .put(ClientController.class, new ClientController(clientService))
+                .put(MessageAPIController.class, new MessageAPIController(messageService, clientService, 10))
+                .build();
+    }
+
+    @Override
+    public F.Promise<Result> onHandlerNotFound(Http.RequestHeader requestHeader) {
+        System.out.println(requestHeader.path());
+        return super.onHandlerNotFound(requestHeader);
     }
 }

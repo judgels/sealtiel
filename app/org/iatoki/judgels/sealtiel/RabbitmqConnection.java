@@ -16,11 +16,11 @@ public final class RabbitmqConnection {
 
     private RabbitmqConnection() {
         factory = new ConnectionFactory();
-        factory.setHost(Play.application().configuration().getString("rabbitmq.host"));
-        factory.setPort(Play.application().configuration().getInt("rabbitmq.port"));
-        factory.setUsername(Play.application().configuration().getString("rabbitmq.username"));
-        factory.setPassword(Play.application().configuration().getString("rabbitmq.password"));
-        factory.setVirtualHost(Play.application().configuration().getString("rabbitmq.virtualHost"));
+        factory.setHost(SealtielProperties.getInstance().getRabbitmqHost());
+        factory.setPort(SealtielProperties.getInstance().getRabbitmqPort());
+        factory.setUsername(SealtielProperties.getInstance().getRabbitmqUsername());
+        factory.setPassword(SealtielProperties.getInstance().getRabbitmqPassword());
+        factory.setVirtualHost(SealtielProperties.getInstance().getRabbitmqVirtualHost());
 
         boolean check = true;
 
