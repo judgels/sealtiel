@@ -64,7 +64,7 @@ public class Global extends org.iatoki.judgels.commons.Global {
         controllersRegistry = ImmutableMap.<Class<?>, Controller> builder()
                 .put(ApplicationController.class, new ApplicationController())
                 .put(ClientController.class, new ClientController(clientService))
-                .put(MessageAPIController.class, new MessageAPIController(messageService, clientService, 10))
+                .put(MessageAPIController.class, new MessageAPIController(messageService, clientService, RabbitmqImpl.getInstance(), 10))
                 .build();
     }
 
