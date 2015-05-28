@@ -1,9 +1,4 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
-
-# Imports
-->      /                                   commons.Routes
+->      /                                   playcommons.Routes
 
 
 # Home page
@@ -26,6 +21,3 @@ POST    /services/send_confirmation         @org.iatoki.judgels.sealtiel.control
 POST    /services/send_rpc_message          @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.sendRPCMessage()
 POST    /services/extend_timeout            @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.extendTimeout()
 
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                       controllers.Assets.at(path="/public", file)
-GET     /vassets/*file                      controllers.Assets.versioned(path="/public", file: Asset)
