@@ -58,6 +58,7 @@ public class Global extends org.iatoki.judgels.commons.Global {
     private void buildServices() {
         clientService = new ClientServiceImpl(clientDao);
         messageService = new MessageServiceImpl(messageDao);
+        RabbitmqImpl.buildInstance(SealtielProperties.getInstance().getRabbitmqHost(), SealtielProperties.getInstance().getRabbitmqPort(), SealtielProperties.getInstance().getRabbitmqUsername(), SealtielProperties.getInstance().getRabbitmqPassword(), SealtielProperties.getInstance().getRabbitmqVirtualHost());
     }
 
     private void buildControllers() {
