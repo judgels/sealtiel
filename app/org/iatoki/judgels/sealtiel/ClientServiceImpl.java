@@ -56,7 +56,6 @@ public final class ClientServiceImpl implements ClientService {
 
     @Override
     public Client findClientByClientJid(String clientJid) {
-        System.out.println(clientJid);
         ClientModel clientModel = clientDao.findByJid(clientJid);
         return new Client(clientModel.id, clientModel.jid, clientModel.secret, clientModel.name, clientModel.adminName, clientModel.adminEmail, Arrays.asList(clientModel.acquaintances.split(",")), clientModel.totalDownload, clientModel.lastDownloadTime);
     }

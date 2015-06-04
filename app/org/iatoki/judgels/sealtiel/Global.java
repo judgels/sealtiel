@@ -71,7 +71,6 @@ public class Global extends org.iatoki.judgels.commons.Global {
 
     @Override
     public F.Promise<Result> onHandlerNotFound(Http.RequestHeader requestHeader) {
-        System.out.println(requestHeader.path());
         return super.onHandlerNotFound(requestHeader);
     }
 }
