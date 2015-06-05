@@ -1,6 +1,7 @@
 package org.iatoki.judgels.sealtiel;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 public final class QueueDeleter implements Runnable {
 
@@ -16,7 +17,7 @@ public final class QueueDeleter implements Runnable {
     public void run() {
         try {
             queueService.deleteQueue(queueName);
-        } catch (IOException e) {
+        } catch (IOException | TimeoutException e) {
             throw new RuntimeException(e);
         }
     }

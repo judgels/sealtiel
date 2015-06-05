@@ -11,6 +11,7 @@ import play.data.Form;
 import play.mvc.Result;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 public final class ApplicationController extends BaseController {
 
@@ -56,7 +57,7 @@ public final class ApplicationController extends BaseController {
         if (!status) {
             try {
                 rabbitmqImpl.createConnection();
-            } catch (IOException e) {
+            } catch (IOException | TimeoutException e) {
                 // do nothing
             }
             status = rabbitmqImpl.isConnected();

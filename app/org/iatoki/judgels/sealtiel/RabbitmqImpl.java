@@ -10,6 +10,7 @@ import com.rabbitmq.client.MessageProperties;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 public final class RabbitmqImpl implements QueueService {
     private static RabbitmqImpl INSTANCE;
@@ -27,11 +28,12 @@ public final class RabbitmqImpl implements QueueService {
         factory.setVirtualHost(virtualHost);
     }
 
-    public synchronized void createConnection() throws IOException {
+    public synchronized void createConnection() throws IOException, TimeoutException {
         if ((connection != null) && (connection.isOpen())) {
             connection.close();
         }
         connection = factory.newConnection();
+
         channel = connection.createChannel();
     }
 
@@ -40,7 +42,7 @@ public final class RabbitmqImpl implements QueueService {
     }
 
     @Override
-    public void createQueue(String queueName) throws IOException {
+    public void createQueue(String queueName) throws IOException, TimeoutException {
         if (!isConnected()) {
             createConnection();
         }
@@ -50,7 +52,7 @@ public final class RabbitmqImpl implements QueueService {
     }
 
     @Override
-    public void putMessageInQueue(String queueName, int priority, byte[] messages) throws IOException {
+    public void putMessageInQueue(String queueName, int priority, byte[] messages) throws IOException, TimeoutException {
         if (!isConnected()) {
             createConnection();
         }
@@ -61,11 +63,14 @@ public final class RabbitmqImpl implements QueueService {
     }
 
     @Override
-    public QueueMessage getMessageFromQueue(String queueName) throws IOException {
+    public QueueMessage getMessageFromQueue(String queueName) throws IOException, TimeoutException {
         if (!isConnected()) {
             createConnection();
         }
+        createQueue(queueName);
+
         GetResponse delivery = channel.basicGet(queueName, false);
+
         if (delivery != null) {
             return new QueueMessage(delivery.getEnvelope().getDeliveryTag(), new String(delivery.getBody()));
         } else {
@@ -74,7 +79,7 @@ public final class RabbitmqImpl implements QueueService {
     }
 
     @Override
-    public void ackMessage(long messageId) throws IOException {
+    public void ackMessage(long messageId) throws IOException, TimeoutException {
         if (!isConnected()) {
             createConnection();
         }
@@ -82,7 +87,7 @@ public final class RabbitmqImpl implements QueueService {
     }
 
     @Override
-    public void requeueMessage(long messageId) throws IOException {
+    public void requeueMessage(long messageId) throws IOException, TimeoutException {
         if (!isConnected()) {
             createConnection();
         }
@@ -90,7 +95,7 @@ public final class RabbitmqImpl implements QueueService {
     }
 
     @Override
-    public void deleteQueue(String queueName) throws IOException {
+    public void deleteQueue(String queueName) throws IOException, TimeoutException {
         if (!isConnected()) {
             createConnection();
         }

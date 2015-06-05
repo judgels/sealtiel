@@ -26,6 +26,7 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.TimeUnit;
 
 @Transactional
@@ -79,7 +80,7 @@ public final class MessageAPIController extends Controller {
                     } else {
                         return badRequest();
                     }
-                } catch (IOException e) {
+                } catch (IOException | TimeoutException e) {
                     throw new RuntimeException(e);
                 }
             } else {
@@ -103,6 +104,7 @@ public final class MessageAPIController extends Controller {
 
                 try {
                     QueueMessage queueMessage = queueService.getMessageFromQueue(client.getClientJid());
+
                     if (queueMessage != null) {
                         Gson gson = GsonWrapper.getInstance();
                         ClientMessage clientMessage = gson.fromJson(queueMessage.getContent(), ClientMessage.class);
@@ -111,7 +113,7 @@ public final class MessageAPIController extends Controller {
 
                         result = queueMessage.getContent();
                     }
-                } catch (IOException e) {
+                } catch (IOException  | TimeoutException e) {
                     throw new RuntimeException(e);
                 }
 
@@ -146,7 +148,7 @@ public final class MessageAPIController extends Controller {
                     unconfirmedMessage.put(messageId, null);
                     requeuers.put(messageId, null);
                     return ok();
-                } catch (IOException e) {
+                } catch (IOException | TimeoutException e) {
                     throw new RuntimeException(e);
                 }
             } else {
@@ -199,7 +201,7 @@ public final class MessageAPIController extends Controller {
                     } else {
                         return badRequest();
                     }
-                } catch (IOException e) {
+                } catch (IOException | TimeoutException e) {
                     e.printStackTrace();
                     return notFound();
                 }
@@ -229,7 +231,7 @@ public final class MessageAPIController extends Controller {
                         requeuers.put(messageId, executorService.schedule(new Requeuer(queueService, messageId), 15, TimeUnit.MINUTES));
                     }
                     return ok();
-                } catch (IOException e) {
+                } catch (IOException | TimeoutException e) {
                     throw new RuntimeException(e);
                 }
             } else {
