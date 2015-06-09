@@ -1,27 +1,25 @@
-@(listClient: List[org.iatoki.judgels.sealtiel.Client])
+@(clients: List[org.iatoki.judgels.sealtiel.Client])
+
+@import play.i18n.Messages
+@import org.iatoki.judgels.sealtiel.controllers.routes
 
 <div class="table-responsive">
     <table class="table table-hover table-condensed table-bordered">
         <tr>
-            <th>id</th>
-            <th>client jid</th>
-            <th>client secret</th>
-            <th>name</th>
-            <th>app name</th>
-            <th>admin name</th>
-            <th>admin email</th>
+            <th>@Messages.get("commons.id")</th>
+            <th>@Messages.get("client.name")</th>
+            <th>@Messages.get("client.jid")</th>
+            <th>@Messages.get("client.secret")</th>
             <th></th>
         </tr>
-        @for(client <- listClient) {
+        @for(client <- clients) {
             <tr>
                 <td>@client.getId</td>
-                <td>@client.getClientJid</td>
-                <td>@client.getSecret</td>
                 <td>@client.getName</td>
-                <td>@client.getAdminName</td>
-                <td>@client.getAdminEmail</td>
+                <td>@client.getJid</td>
+                <td>@client.getSecret</td>
                 <td>
-                    <a href="@org.iatoki.judgels.sealtiel.controllers.routes.ClientController.viewClient(client.getId)"><i class="fa fa-search"></i> view</a>
+                    <a href="@routes.ClientController.viewClient(client.getId)"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></a>
                 </td>
             </tr>
         }

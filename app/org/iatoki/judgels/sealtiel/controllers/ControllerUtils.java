@@ -20,13 +20,13 @@ public final class ControllerUtils extends AbstractControllerUtils {
     public void appendSidebarLayout(LazyHtml content) {
         LazyHtml sidebarContent = new LazyHtml(menusView.render(ImmutableList.of(
                     new InternalLink(Messages.get("client.clients"), routes.ClientController.index()),
-                    new InternalLink(Messages.get("system.connection"), routes.ApplicationController.checkRabbitmqConnection())
+                    new InternalLink(Messages.get("connection.connection"), routes.ApplicationController.checkRabbitmqConnection())
               )
         ));
         content.appendLayout(c -> sidebarLayout.render(sidebarContent.render(), c));
     }
 
-    public static final ControllerUtils getInstance() {
+    public static ControllerUtils getInstance() {
         return INSTANCE;
     }
 }

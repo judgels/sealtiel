@@ -25,15 +25,13 @@ public final class ClientServiceImpl implements ClientService {
     @Override
     public Client findClientByClientId(long clientId) {
         ClientModel clientModel = clientDao.findById(clientId);
-        return new Client(clientModel.id, clientModel.jid, clientModel.secret, clientModel.name, clientModel.adminName, clientModel.adminEmail, Arrays.asList(clientModel.acquaintances.split(",")), clientModel.totalDownload, clientModel.lastDownloadTime);
+        return createClientFromModel(clientModel);
     }
 
     @Override
-    public void createClient(String name, String adminName, String adminEmail) {
+    public void createClient(String name) {
         ClientModel clientModel = new ClientModel();
         clientModel.name = name;
-        clientModel.adminName = adminName;
-        clientModel.adminEmail = adminEmail;
         clientModel.acquaintances = "";
         clientModel.totalDownload = 0;
         clientModel.lastDownloadTime = System.currentTimeMillis();
@@ -46,7 +44,7 @@ public final class ClientServiceImpl implements ClientService {
     public List<Client> findAllClient() {
         List<ClientModel> clientModels = clientDao.findAll();
 
-        return clientModels.stream().map(c -> new Client(c.id, c.jid, c.secret, c.name, c.adminName, c.adminEmail, Arrays.asList(c.acquaintances.split(",")), c.totalDownload, c.lastDownloadTime)).collect(Collectors.toList());
+        return clientModels.stream().map(c -> new Client(c.id, c.jid, c.secret, c.name, Arrays.asList(c.acquaintances.split(",")), c.totalDownload, c.lastDownloadTime)).collect(Collectors.toList());
     }
 
     @Override
@@ -57,7 +55,7 @@ public final class ClientServiceImpl implements ClientService {
     @Override
     public Client findClientByClientJid(String clientJid) {
         ClientModel clientModel = clientDao.findByJid(clientJid);
-        return new Client(clientModel.id, clientModel.jid, clientModel.secret, clientModel.name, clientModel.adminName, clientModel.adminEmail, Arrays.asList(clientModel.acquaintances.split(",")), clientModel.totalDownload, clientModel.lastDownloadTime);
+        return createClientFromModel(clientModel);
     }
 
     @Override
@@ -66,7 +64,7 @@ public final class ClientServiceImpl implements ClientService {
         List<ClientModel> clientModels = clientDao.findClientsByClientJids(clientJids);
 
         for (ClientModel clientModel : clientModels) {
-            result.add(new Client(clientModel.id, clientModel.jid, clientModel.secret, clientModel.name, clientModel.adminName, clientModel.adminEmail, Arrays.asList(clientModel.acquaintances.split(",")), clientModel.totalDownload, clientModel.lastDownloadTime));
+            result.add(createClientFromModel(clientModel));
         }
 
         return result.build();
@@ -106,5 +104,9 @@ public final class ClientServiceImpl implements ClientService {
 
             clientDao.edit(clientModel, IdentityUtils.getUserJid(), IdentityUtils.getIpAddress());
         }
+    }
+
+    private Client createClientFromModel(ClientModel clientModel) {
+        return new Client(clientModel.id, clientModel.jid, clientModel.secret, clientModel.name, Arrays.asList(clientModel.acquaintances.split(",")), clientModel.totalDownload, clientModel.lastDownloadTime);
     }
 }

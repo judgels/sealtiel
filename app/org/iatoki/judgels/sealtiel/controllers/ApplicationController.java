@@ -1,5 +1,7 @@
 package org.iatoki.judgels.sealtiel.controllers;
 
+import com.google.common.collect.ImmutableList;
+import org.iatoki.judgels.commons.InternalLink;
 import org.iatoki.judgels.commons.LazyHtml;
 import org.iatoki.judgels.commons.controllers.BaseController;
 import org.iatoki.judgels.commons.views.html.layouts.centerLayout;
@@ -8,6 +10,7 @@ import org.iatoki.judgels.sealtiel.RabbitmqImpl;
 import org.iatoki.judgels.sealtiel.views.html.connectionView;
 import org.iatoki.judgels.sealtiel.views.html.indexView;
 import play.data.Form;
+import play.i18n.Messages;
 import play.mvc.Result;
 
 import java.io.IOException;
@@ -65,6 +68,9 @@ public final class ApplicationController extends BaseController {
 
         LazyHtml content = new LazyHtml(connectionView.render(status));
         ControllerUtils.getInstance().appendSidebarLayout(content);
+        ControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
+                new InternalLink(Messages.get("connection.connection"), routes.ApplicationController.checkRabbitmqConnection())
+        ));
         ControllerUtils.getInstance().appendTemplateLayout(content, "System - Rabbitmq");
 
         return ControllerUtils.getInstance().lazyOk(content);

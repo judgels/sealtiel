@@ -3,7 +3,7 @@ package org.iatoki.judgels.sealtiel;
 import java.util.List;
 
 public interface ClientService {
-    void createClient(String appName, String adminName, String adminEmail);
+    void createClient(String name);
 
     List<Client> findAllClient();
 

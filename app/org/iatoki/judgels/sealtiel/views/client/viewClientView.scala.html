@@ -1,37 +1,42 @@
-@(client: org.iatoki.judgels.sealtiel.Client, listClients: List[org.iatoki.judgels.sealtiel.Client], acquaintances: List[org.iatoki.judgels.sealtiel.Client])
+@(client: org.iatoki.judgels.sealtiel.Client, clients: List[org.iatoki.judgels.sealtiel.Client], acquaintances: List[org.iatoki.judgels.sealtiel.Client])
 
-<h1><i class="fa fa-desktop"></i> @client.getName</h1>
-<hr>
-<div class="row">
-	@helper.form(action = org.iatoki.judgels.sealtiel.controllers.routes.ClientController.addClientAcquaintance(client.getId)) {
-		<div class="col-md-3">
-			<select name="acquaintance" class="form-control">
-				@for(client <- listClients) {
-					<option value="@client.getClientJid">@client.getName (@client.getAdminEmail)</option>
-				}
-			</select>
-		</div>
-		<div class="col-md-9">
-			<button type="submit" class="btn btn-warning">Add</button>
-		</div>
-	}
-</div>
+@import play.i18n.Messages
+@import org.iatoki.judgels.sealtiel.controllers.routes
+@import b3.inline.fieldConstructor
 
-<h3><i class="fa fa-tasks"></i> channel</h3>
-<hr>
+<h3>@Messages.get("channel.add")</h3>
+
+@b3.form(routes.ClientController.addClientAcquaintance(client.getId)) {
+    <div class="form-group">
+        <label class="control-label col-md-4">@Messages.get("channel.channel")</label>
+        <div class="col-md-8">
+            <select name="acquaintance" class="form-control">
+                @for(acq <- clients) {
+                    <option value="@acq.getJid">@acq.getName</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    @b3.submit('class -> "btn btn-primary") { @Messages.get("commons.add") }
+}
+
+<hr />
+
+<h3>@Messages.get("channel.channels")</h3>
 <div class="table-responsive">
 	<table class="table table-hover table-condensed table-bordered">
 		<tr>
-			<th>Channel</th>
-			<th>Name</th>
+			<th>@Messages.get("channel.name")</th>
+			<th>@Messages.get("channel.jid")</th>
 			<th></th>
 		</tr>
 		@for(acquaintance <- acquaintances) {
 			<tr>
-				<td>@acquaintance.getClientJid</td>
 				<td>@acquaintance.getName</td>
-				<td>
-					<a href="@org.iatoki.judgels.sealtiel.controllers.routes.ClientController.removeClientAcquaintance(client.getId, acquaintance.getClientJid)"><i class="fa fa-times"></i> Remove</a>
+                <td>@acquaintance.getJid</td>
+                <td>
+					<a href="@routes.ClientController.removeClientAcquaintance(client.getId, acquaintance.getJid)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
 				</td>
 			</tr>
 		}

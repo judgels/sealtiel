@@ -2,13 +2,11 @@
 
 @import play.i18n.Messages
 
-@implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-xs-2", "col-xs-10") }
+@implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-md-3", "col-md-9") }
 
 @b3.form(action = org.iatoki.judgels.sealtiel.controllers.routes.ClientController.postCreateClient()) {
-    @b3.text(newClientForm("appName"), 'class->"form-control", '_label->Messages.get("appName"))
-    @b3.text(newClientForm("adminName"), 'class->"form-control", '_label->Messages.get("adminName"))
-    @b3.text(newClientForm("adminEmail"), 'class->"form-control", '_label->Messages.get("adminEmail"))
+    @b3.text(newClientForm("name"), 'class->"form-control", '_label->Messages.get("client.name"))
 
-    @b3.submit('class -> "btn btn-primary") { @Messages.get("general.create") }
+    @b3.submit('class -> "btn btn-primary") { @Messages.get("commons.create") }
 }
 

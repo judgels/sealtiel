@@ -60,7 +60,7 @@ public final class MessageAPIController extends Controller {
                     Gson gson = GsonWrapper.getInstance();
 
                     ClientMessage clientMessage = gson.fromJson(params.get("message"), ClientMessage.class);
-                    clientMessage.setSourceClientJid(client.getClientJid());
+                    clientMessage.setSourceClientJid(client.getJid());
                     clientMessage.setSourceIPAddress(request().remoteAddress());
                     clientMessage.setTimestamp(System.currentTimeMillis() + "");
 
@@ -103,7 +103,7 @@ public final class MessageAPIController extends Controller {
                 String result = "";
 
                 try {
-                    QueueMessage queueMessage = queueService.getMessageFromQueue(client.getClientJid());
+                    QueueMessage queueMessage = queueService.getMessageFromQueue(client.getJid());
 
                     if (queueMessage != null) {
                         Gson gson = GsonWrapper.getInstance();
@@ -174,7 +174,7 @@ public final class MessageAPIController extends Controller {
                     Gson gson = GsonWrapper.getInstance();
 
                     ClientMessage clientMessage = gson.fromJson(params.get("message"), ClientMessage.class);
-                    clientMessage.setSourceClientJid(client.getClientJid());
+                    clientMessage.setSourceClientJid(client.getJid());
                     clientMessage.setSourceIPAddress(request().remoteAddress());
                     clientMessage.setTimestamp(new Date().getTime() + "");
 

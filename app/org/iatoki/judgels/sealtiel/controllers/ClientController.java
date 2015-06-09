@@ -6,6 +6,7 @@ import org.iatoki.judgels.commons.LazyHtml;
 import org.iatoki.judgels.commons.controllers.BaseController;
 import org.iatoki.judgels.commons.views.html.layouts.headingLayout;
 import org.iatoki.judgels.commons.views.html.layouts.headingWithActionLayout;
+import org.iatoki.judgels.commons.views.html.layouts.tabLayout;
 import org.iatoki.judgels.sealtiel.Client;
 import org.iatoki.judgels.sealtiel.ClientCreateForm;
 import org.iatoki.judgels.sealtiel.ClientService;
@@ -17,7 +18,6 @@ import play.data.DynamicForm;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.i18n.Messages;
-import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 
@@ -35,7 +35,7 @@ public final class ClientController extends BaseController {
     @Transactional(readOnly = true)
     public Result index() {
         LazyHtml content = new LazyHtml(listClientsView.render(clientService.findAllClient()));
-        content.appendLayout(c -> headingWithActionLayout.render(Messages.get("client.list"), new InternalLink(Messages.get("client.create"), routes.ClientController.createClient()), c));
+        content.appendLayout(c -> headingWithActionLayout.render(Messages.get("client.list"), new InternalLink(Messages.get("commons.create"), routes.ClientController.createClient()), c));
         ControllerUtils.getInstance().appendSidebarLayout(content);
         ControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
               new InternalLink(Messages.get("client.clients"), routes.ClientController.index())
@@ -56,7 +56,7 @@ public final class ClientController extends BaseController {
             return showCreateClient(newClientForm);
         } else {
             ClientCreateForm data = newClientForm.get();
-            clientService.createClient(data.appName, data.adminName, data.adminEmail);
+            clientService.createClient(data.name);
             return redirect(routes.ClientController.index());
         }
 
@@ -68,11 +68,11 @@ public final class ClientController extends BaseController {
         if (client != null) {
             List<Client> acquaintances = clientService.findClientsByClientJids(client.getAcquaintances());
             LazyHtml content = new LazyHtml(viewClientView.render(client, clientService.findAllClient(), acquaintances));
-            content.appendLayout(c -> headingLayout.render(Messages.get("client.view"), c));
+            content.appendLayout(c -> tabLayout.render(ImmutableList.of(new InternalLink(Messages.get("channel.channels"), routes.ClientController.viewClient(client.getId()))), c));
             ControllerUtils.getInstance().appendSidebarLayout(content);
             ControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
                   new InternalLink(Messages.get("client.clients"), routes.ClientController.index()),
-                  new InternalLink(Messages.get("client.view"), routes.ClientController.viewClient(clientId))
+                  new InternalLink(Messages.get("client.view"), routes.ClientController.viewClient(client.getId()))
             ));
             ControllerUtils.getInstance().appendTemplateLayout(content, "Client - View");
 
@@ -88,7 +88,7 @@ public final class ClientController extends BaseController {
         if (client != null) {
             DynamicForm form = DynamicForm.form().bindFromRequest();
             String acquaintanceChannel = form.get("acquaintance");
-            clientService.addAcquaintance(client.getClientJid(), acquaintanceChannel);
+            clientService.addAcquaintance(client.getJid(), acquaintanceChannel);
 
             return redirect(routes.ClientController.viewClient(clientId));
         } else {
@@ -101,7 +101,7 @@ public final class ClientController extends BaseController {
         Client client = clientService.findClientByClientId(clientId);
         if (client != null) {
 
-            clientService.removeAcquaintance(client.getClientJid(), acquaintanceChannel);
+            clientService.removeAcquaintance(client.getJid(), acquaintanceChannel);
 
             return redirect(routes.ClientController.viewClient(clientId));
         } else {

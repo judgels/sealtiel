@@ -4,12 +4,5 @@ import play.data.validation.Constraints;
 
 public final class ClientCreateForm {
     @Constraints.Required
-    public String appName;
-
-    @Constraints.Required
-    public String adminName;
-
-    @Constraints.Required
-    @Constraints.Email
-    public String adminEmail;
+    public String name;
 }
