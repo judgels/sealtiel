@@ -13,11 +13,11 @@ client.name=Name
 client.create=Create Client
 client.view=View Client
 
-channel.name=Name
-channel.jid=JID
-channel.channel=Channel
-channel.channels=Channels
-channel.add=Add Channel
+acquaintance.name=Name
+acquaintance.jid=JID
+acquaintance.acquaintance=Acquaintance
+acquaintance.acquaintances=Acquaintances
+acquaintance.add=Add Acquaintance
 
 connection.connection=Connection
 connection.status=Connection Status

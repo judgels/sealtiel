@@ -4,12 +4,12 @@
 @import org.iatoki.judgels.sealtiel.controllers.routes
 @import b3.inline.fieldConstructor
 
-<h3>@Messages.get("channel.add")</h3>
+<h3>@Messages.get("acquaintance.add")</h3>
 
 @b3.form(routes.ClientController.addClientAcquaintance(client.getId)) {
     <div class="form-group">
-        <label class="control-label col-md-4">@Messages.get("channel.channel")</label>
-        <div class="col-md-8">
+        <label class="control-label col-md-6">@Messages.get("acquaintance.acquaintance")</label>
+        <div class="col-md-6">
             <select name="acquaintance" class="form-control">
                 @for(acq <- clients) {
                     <option value="@acq.getJid">@acq.getName</option>
@@ -23,12 +23,12 @@
 
 <hr />
 
-<h3>@Messages.get("channel.channels")</h3>
+<h3>@Messages.get("acquaintance.acquaintances")</h3>
 <div class="table-responsive">
 	<table class="table table-hover table-condensed table-bordered">
 		<tr>
-			<th>@Messages.get("channel.name")</th>
-			<th>@Messages.get("channel.jid")</th>
+			<th>@Messages.get("acquaintance.name")</th>
+			<th>@Messages.get("acquaintance.jid")</th>
 			<th></th>
 		</tr>
 		@for(acquaintance <- acquaintances) {

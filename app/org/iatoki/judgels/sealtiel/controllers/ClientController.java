@@ -68,7 +68,7 @@ public final class ClientController extends BaseController {
         if (client != null) {
             List<Client> acquaintances = clientService.findClientsByClientJids(client.getAcquaintances());
             LazyHtml content = new LazyHtml(viewClientView.render(client, clientService.findAllClient(), acquaintances));
-            content.appendLayout(c -> tabLayout.render(ImmutableList.of(new InternalLink(Messages.get("channel.channels"), routes.ClientController.viewClient(client.getId()))), c));
+            content.appendLayout(c -> tabLayout.render(ImmutableList.of(new InternalLink(Messages.get("acquaintance.acquaintances"), routes.ClientController.viewClient(client.getId()))), c));
             ControllerUtils.getInstance().appendSidebarLayout(content);
             ControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
                   new InternalLink(Messages.get("client.clients"), routes.ClientController.index()),
