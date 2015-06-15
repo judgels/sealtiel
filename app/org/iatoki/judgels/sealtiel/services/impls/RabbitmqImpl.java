@@ -1,4 +1,4 @@
-package org.iatoki.judgels.sealtiel;
+package org.iatoki.judgels.sealtiel.services.impls;
 
 import com.google.common.collect.Maps;
 import com.rabbitmq.client.AMQP;
@@ -7,6 +7,8 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.GetResponse;
 import com.rabbitmq.client.MessageProperties;
+import org.iatoki.judgels.sealtiel.QueueMessage;
+import org.iatoki.judgels.sealtiel.services.QueueService;
 
 import java.io.IOException;
 import java.util.Map;

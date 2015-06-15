@@ -1,5 +1,6 @@
-package org.iatoki.judgels.sealtiel;
+package org.iatoki.judgels.sealtiel.controllers.forms;
 
+import org.iatoki.judgels.sealtiel.SealtielProperties;
 import play.Play;
 import play.data.validation.Constraints;
 

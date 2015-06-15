@@ -1,5 +1,7 @@
 package org.iatoki.judgels.sealtiel;
 
+import org.iatoki.judgels.sealtiel.services.QueueService;
+
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 

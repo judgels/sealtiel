@@ -1,8 +1,10 @@
-package org.iatoki.judgels.sealtiel;
+package org.iatoki.judgels.sealtiel.services.impls;
 
 import org.iatoki.judgels.commons.IdentityUtils;
-import org.iatoki.judgels.sealtiel.models.dao.interfaces.MessageDao;
-import org.iatoki.judgels.sealtiel.models.domains.MessageModel;
+import org.iatoki.judgels.sealtiel.Message;
+import org.iatoki.judgels.sealtiel.models.daos.MessageDao;
+import org.iatoki.judgels.sealtiel.models.dbs.MessageModel;
+import org.iatoki.judgels.sealtiel.services.MessageService;
 
 public final class MessageServiceImpl implements MessageService {
 

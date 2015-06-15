@@ -1,8 +1,8 @@
-package org.iatoki.judgels.sealtiel.models.dao.hibernate;
+package org.iatoki.judgels.sealtiel.models.daos.impls;
 
 import org.iatoki.judgels.commons.models.daos.hibernate.AbstractJudgelsHibernateDao;
-import org.iatoki.judgels.sealtiel.models.dao.interfaces.MessageDao;
-import org.iatoki.judgels.sealtiel.models.domains.MessageModel;
+import org.iatoki.judgels.sealtiel.models.daos.MessageDao;
+import org.iatoki.judgels.sealtiel.models.dbs.MessageModel;
 
 public final class MessageHibernateDao extends AbstractJudgelsHibernateDao<MessageModel> implements MessageDao {
 
