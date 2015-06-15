@@ -1,4 +1,6 @@
-package org.iatoki.judgels.sealtiel;
+package org.iatoki.judgels.sealtiel.services;
+
+import org.iatoki.judgels.sealtiel.Client;
 
 import java.util.List;
 

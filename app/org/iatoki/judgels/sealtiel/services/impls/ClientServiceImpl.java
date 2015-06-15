@@ -1,12 +1,14 @@
-package org.iatoki.judgels.sealtiel;
+package org.iatoki.judgels.sealtiel.services.impls;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.iatoki.judgels.commons.IdentityUtils;
 import org.iatoki.judgels.commons.JudgelsUtils;
-import org.iatoki.judgels.sealtiel.models.dao.interfaces.ClientDao;
-import org.iatoki.judgels.sealtiel.models.domains.ClientModel;
+import org.iatoki.judgels.sealtiel.Client;
+import org.iatoki.judgels.sealtiel.models.daos.ClientDao;
+import org.iatoki.judgels.sealtiel.models.dbs.ClientModel;
+import org.iatoki.judgels.sealtiel.services.ClientService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
