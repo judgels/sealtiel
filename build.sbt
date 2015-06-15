@@ -10,10 +10,7 @@ lazy val sealtiel = (project in file("."))
     .settings(
         name := "sealtiel",
         version := IO.read(file("version.properties")).trim,
-        scalaVersion := "2.11.1",
-        libraryDependencies ++= Seq(
-            "com.rabbitmq" % "amqp-client" % "3.5.3"
-        )
+        scalaVersion := "2.11.1"
     )
     .settings(TestNGPlugin.testNGSettings: _*)
     .settings(
