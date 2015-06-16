@@ -7,7 +7,7 @@ import org.iatoki.judgels.commons.IdentityUtils;
 import org.iatoki.judgels.commons.JudgelsUtils;
 import org.iatoki.judgels.sealtiel.Client;
 import org.iatoki.judgels.sealtiel.models.daos.ClientDao;
-import org.iatoki.judgels.sealtiel.models.dbs.ClientModel;
+import org.iatoki.judgels.sealtiel.models.entities.ClientModel;
 import org.iatoki.judgels.sealtiel.services.ClientService;
 
 import java.util.ArrayList;

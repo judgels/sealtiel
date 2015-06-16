@@ -1,4 +1,4 @@
-package org.iatoki.judgels.sealtiel.models.dbs;
+package org.iatoki.judgels.sealtiel.models.entities;
 
 import org.iatoki.judgels.commons.models.JidPrefix;
 import org.iatoki.judgels.commons.models.domains.AbstractJudgelsModel;

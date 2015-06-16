@@ -1,7 +1,7 @@
-package org.iatoki.judgels.sealtiel.models.dbs.metas;
+package org.iatoki.judgels.sealtiel.models.entities;
 
 import org.iatoki.judgels.commons.models.domains.AbstractJudgelsModel_;
-import org.iatoki.judgels.sealtiel.models.dbs.MessageModel;
+import org.iatoki.judgels.sealtiel.models.entities.MessageModel;
 
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;

@@ -3,8 +3,8 @@ package org.iatoki.judgels.sealtiel.models.daos.impls;
 import com.google.common.collect.ImmutableList;
 import org.iatoki.judgels.commons.models.daos.hibernate.AbstractJudgelsHibernateDao;
 import org.iatoki.judgels.sealtiel.models.daos.ClientDao;
-import org.iatoki.judgels.sealtiel.models.dbs.ClientModel;
-import org.iatoki.judgels.sealtiel.models.dbs.metas.ClientModel_;
+import org.iatoki.judgels.sealtiel.models.entities.ClientModel;
+import org.iatoki.judgels.sealtiel.models.entities.ClientModel_;
 import play.db.jpa.JPA;
 
 import javax.persistence.criteria.CriteriaBuilder;
