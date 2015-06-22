@@ -1,6 +1,8 @@
 package org.iatoki.judgels.sealtiel.controllers.apis;
 
 import com.google.gson.Gson;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.iatoki.judgels.commons.JudgelsUtils;
 import org.iatoki.judgels.sealtiel.Client;
 import org.iatoki.judgels.sealtiel.services.ClientService;
 import org.iatoki.judgels.sealtiel.GsonWrapper;
@@ -50,195 +52,231 @@ public final class MessageAPIController extends Controller {
 
     @BodyParser.Of(value = BodyParser.FormUrlEncoded.class, maxLength = 512 * 1024 * 1024)
     public Result sendMessage() {
-        DynamicForm params = DynamicForm.form().bindFromRequest();
-        String clientJid = params.get("clientJid");
-        String clientSecret = params.get("clientSecret");
-        if (clientService.existByClientJid(clientJid)) {
-            Client client = clientService.findClientByClientJid(clientJid);
-            if (client.getSecret().equals(clientSecret)) {
-                try {
-                    Gson gson = GsonWrapper.getInstance();
+        UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
 
-                    ClientMessage clientMessage = gson.fromJson(params.get("message"), ClientMessage.class);
-                    clientMessage.setSourceClientJid(client.getJid());
-                    clientMessage.setSourceIPAddress(request().remoteAddress());
-                    clientMessage.setTimestamp(System.currentTimeMillis() + "");
+        if (credentials != null) {
+            String clientJid = credentials.getUserName();
+            String clientSecret = credentials.getPassword();
 
-                    Message message = messageService.createMessage(clientMessage.getId(), clientMessage.getSourceClientJid(), clientMessage.getSourceIPAddress(), clientMessage.getTargetClientJid(), clientMessage.getMessageType(), clientMessage.getMessage(), clientMessage.getPriority());
-                    if (client.getAcquaintances().contains(clientMessage.getTargetClientJid())) {
-                        // target verified
+            DynamicForm params = DynamicForm.form().bindFromRequest();
+            if (clientService.existByClientJid(clientJid)) {
+                Client client = clientService.findClientByClientJid(clientJid);
+                if (client.getSecret().equals(clientSecret)) {
+                    try {
+                        Gson gson = GsonWrapper.getInstance();
 
-                        queueService.putMessageInQueue(message.getTargetClientJid(), Math.min(Math.max(message.getPriority(), 0), 10), gson.toJson(message).getBytes());
-                        return ok();
-                    } else if (clientService.findClientByClientJid(clientMessage.getTargetClientJid()) == null) {
-                        // either target is for RPC or in other nodes
+                        ClientMessage clientMessage = gson.fromJson(params.get("message"), ClientMessage.class);
+                        clientMessage.setSourceClientJid(client.getJid());
+                        clientMessage.setSourceIPAddress(request().remoteAddress());
+                        clientMessage.setTimestamp(System.currentTimeMillis() + "");
 
-                        queueService.putMessageInQueue(message.getTargetClientJid(), Math.min(Math.max(message.getPriority(), 0), 10), gson.toJson(message).getBytes());
-                        executorService.schedule(new QueueDeleter(queueService, message.getTargetClientJid()), 5, TimeUnit.MINUTES);
+                        Message message = messageService.createMessage(clientMessage.getId(), clientMessage.getSourceClientJid(), clientMessage.getSourceIPAddress(), clientMessage.getTargetClientJid(), clientMessage.getMessageType(), clientMessage.getMessage(), clientMessage.getPriority());
+                        if (client.getAcquaintances().contains(clientMessage.getTargetClientJid())) {
+                            // target verified
 
-                        return ok();
-                    } else {
-                        return badRequest();
+                            queueService.putMessageInQueue(message.getTargetClientJid(), Math.min(Math.max(message.getPriority(), 0), 10), gson.toJson(message).getBytes());
+                            return ok();
+                        } else if (clientService.findClientByClientJid(clientMessage.getTargetClientJid()) == null) {
+                            // either target is for RPC or in other nodes
+
+                            queueService.putMessageInQueue(message.getTargetClientJid(), Math.min(Math.max(message.getPriority(), 0), 10), gson.toJson(message).getBytes());
+                            executorService.schedule(new QueueDeleter(queueService, message.getTargetClientJid()), 5, TimeUnit.MINUTES);
+
+                            return ok();
+                        } else {
+                            return badRequest();
+                        }
+                    } catch (IOException | TimeoutException e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (IOException | TimeoutException e) {
-                    throw new RuntimeException(e);
+                } else {
+                    return forbidden();
                 }
             } else {
-                return forbidden();
+                return notFound();
             }
         } else {
-            return notFound();
+            response().setHeader("WWW-Authenticate", "Basic realm=\"" + request().host() + "\"");
+            return unauthorized();
         }
     }
 
     public Result getMessage() {
-        DynamicForm params = DynamicForm.form().bindFromRequest();
-        String clientJid = params.get("clientJid");
-        String clientSecret = params.get("clientSecret");
+        UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
 
-        if (clientService.existByClientJid(clientJid)) {
-            Client client = clientService.findClientByClientJid(clientJid);
+        if (credentials != null) {
+            String clientJid = credentials.getUserName();
+            String clientSecret = credentials.getPassword();
 
-            if (client.getSecret().equals(clientSecret)) {
-                String result = "";
+            DynamicForm params = DynamicForm.form().bindFromRequest();
+            if (clientService.existByClientJid(clientJid)) {
+                Client client = clientService.findClientByClientJid(clientJid);
 
-                try {
-                    QueueMessage queueMessage = queueService.getMessageFromQueue(client.getJid());
+                if (client.getSecret().equals(clientSecret)) {
+                    String result = "";
 
-                    if (queueMessage != null) {
-                        Gson gson = GsonWrapper.getInstance();
-                        ClientMessage clientMessage = gson.fromJson(queueMessage.getContent(), ClientMessage.class);
-                        unconfirmedMessage.put(clientMessage.getId(), queueMessage.getTag());
-                        requeuers.put(clientMessage.getId(), executorService.schedule(new Requeuer(queueService, clientMessage.getId()), 15, TimeUnit.MINUTES));
+                    try {
+                        QueueMessage queueMessage = queueService.getMessageFromQueue(client.getJid());
 
-                        result = queueMessage.getContent();
+                        if (queueMessage != null) {
+                            Gson gson = GsonWrapper.getInstance();
+                            ClientMessage clientMessage = gson.fromJson(queueMessage.getContent(), ClientMessage.class);
+                            unconfirmedMessage.put(clientMessage.getId(), queueMessage.getTag());
+                            requeuers.put(clientMessage.getId(), executorService.schedule(new Requeuer(queueService, clientMessage.getId()), 15, TimeUnit.MINUTES));
+
+                            result = queueMessage.getContent();
+                        }
+                    } catch (IOException | TimeoutException e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (IOException  | TimeoutException e) {
-                    throw new RuntimeException(e);
-                }
 
-                if (!"".equals(result)) {
-                    return ok(result);
+                    if (!"".equals(result)) {
+                        return ok(result);
+                    } else {
+                        return notFound();
+                    }
                 } else {
-                    return notFound();
+                    return forbidden();
                 }
             } else {
-                return forbidden();
+                return notFound();
             }
         } else {
-            return notFound();
+            response().setHeader("WWW-Authenticate", "Basic realm=\"" + request().host() + "\"");
+            return unauthorized();
         }
     }
 
     public Result confirmMessage() {
-        DynamicForm params = DynamicForm.form().bindFromRequest();
-        String clientJid = params.get("clientJid");
-        String clientSecret = params.get("clientSecret");
+        UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
 
-        if (clientService.existByClientJid(clientJid)) {
-            Client client = clientService.findClientByClientJid(clientJid);
+        if (credentials != null) {
+            String clientJid = credentials.getUserName();
+            String clientSecret = credentials.getPassword();
 
-            if (client.getSecret().equals(clientSecret)) {
-                try {
-                    long messageId = Long.parseLong(params.get("messageId"));
-                    queueService.ackMessage(unconfirmedMessage.get(messageId));
-                    if (requeuers.containsKey(messageId)) {
-                        requeuers.get(messageId).cancel(true);
+            DynamicForm params = DynamicForm.form().bindFromRequest();
+            if (clientService.existByClientJid(clientJid)) {
+                Client client = clientService.findClientByClientJid(clientJid);
+
+                if (client.getSecret().equals(clientSecret)) {
+                    try {
+                        long messageId = Long.parseLong(params.get("messageId"));
+                        queueService.ackMessage(unconfirmedMessage.get(messageId));
+                        if (requeuers.containsKey(messageId)) {
+                            requeuers.get(messageId).cancel(true);
+                        }
+                        unconfirmedMessage.put(messageId, null);
+                        requeuers.put(messageId, null);
+                        return ok();
+                    } catch (IOException | TimeoutException e) {
+                        throw new RuntimeException(e);
                     }
-                    unconfirmedMessage.put(messageId, null);
-                    requeuers.put(messageId, null);
-                    return ok();
-                } catch (IOException | TimeoutException e) {
-                    throw new RuntimeException(e);
+                } else {
+                    return forbidden();
                 }
             } else {
-                return forbidden();
+                return notFound();
             }
         } else {
-            return notFound();
+            response().setHeader("WWW-Authenticate", "Basic realm=\"" + request().host() + "\"");
+            return unauthorized();
         }
     }
 
     public Result sendRPCMessage() {
-        DynamicForm params = DynamicForm.form().bindFromRequest();
-        String clientJid = params.get("clientJid");
-        String clientSecret = params.get("clientSecret");
+        UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
 
-        if (clientService.existByClientJid(clientJid)) {
-            Client client = clientService.findClientByClientJid(clientJid);
+        if (credentials != null) {
+            String clientJid = credentials.getUserName();
+            String clientSecret = credentials.getPassword();
 
-            if (client.getSecret().equals(clientSecret)) {
-                String result = "";
+            DynamicForm params = DynamicForm.form().bindFromRequest();
+            if (clientService.existByClientJid(clientJid)) {
+                Client client = clientService.findClientByClientJid(clientJid);
 
-                try {
-                    Gson gson = GsonWrapper.getInstance();
+                if (client.getSecret().equals(clientSecret)) {
+                    String result = "";
 
-                    ClientMessage clientMessage = gson.fromJson(params.get("message"), ClientMessage.class);
-                    clientMessage.setSourceClientJid(client.getJid());
-                    clientMessage.setSourceIPAddress(request().remoteAddress());
-                    clientMessage.setTimestamp(new Date().getTime() + "");
+                    try {
+                        Gson gson = GsonWrapper.getInstance();
 
-                    Message message = messageService.createMessage(clientMessage.getId(), clientMessage.getSourceClientJid(), clientMessage.getSourceIPAddress(), clientMessage.getTargetClientJid(), clientMessage.getMessageType(), clientMessage.getMessage(), clientMessage.getPriority());
-                    if (client.getAcquaintances().contains(clientMessage.getTargetClientJid())) {
+                        ClientMessage clientMessage = gson.fromJson(params.get("message"), ClientMessage.class);
+                        clientMessage.setSourceClientJid(client.getJid());
+                        clientMessage.setSourceIPAddress(request().remoteAddress());
+                        clientMessage.setTimestamp(new Date().getTime() + "");
 
-                        UUID uniqueQueue = UUID.randomUUID();
-                        queueService.createQueue(uniqueQueue.toString());
+                        Message message = messageService.createMessage(clientMessage.getId(), clientMessage.getSourceClientJid(), clientMessage.getSourceIPAddress(), clientMessage.getTargetClientJid(), clientMessage.getMessageType(), clientMessage.getMessage(), clientMessage.getPriority());
+                        if (client.getAcquaintances().contains(clientMessage.getTargetClientJid())) {
 
-                        clientMessage.setSourceClientJid(uniqueQueue.toString());
-                        queueService.putMessageInQueue(message.getTargetClientJid(), Math.min(Math.max(message.getPriority(), 0), 10), gson.toJson(message).getBytes());
+                            UUID uniqueQueue = UUID.randomUUID();
+                            queueService.createQueue(uniqueQueue.toString());
 
-                        QueueMessage queueMessage = queueService.getMessageFromQueue(uniqueQueue.toString());
-                        if (queueMessage != null) {
-                            result = new String(queueMessage.getContent());
-                            queueService.deleteQueue(uniqueQueue.toString());
-                        }
+                            clientMessage.setSourceClientJid(uniqueQueue.toString());
+                            queueService.putMessageInQueue(message.getTargetClientJid(), Math.min(Math.max(message.getPriority(), 0), 10), gson.toJson(message).getBytes());
 
-                        if (!"".equals(result)) {
-                            return ok(result);
+                            QueueMessage queueMessage = queueService.getMessageFromQueue(uniqueQueue.toString());
+                            if (queueMessage != null) {
+                                result = new String(queueMessage.getContent());
+                                queueService.deleteQueue(uniqueQueue.toString());
+                            }
+
+                            if (!"".equals(result)) {
+                                return ok(result);
+                            } else {
+                                return notFound();
+                            }
                         } else {
-                            return notFound();
+                            return badRequest();
                         }
-                    } else {
-                        return badRequest();
+                    } catch (IOException | TimeoutException e) {
+                        e.printStackTrace();
+                        return notFound();
                     }
-                } catch (IOException | TimeoutException e) {
-                    e.printStackTrace();
-                    return notFound();
+                } else {
+                    return forbidden();
                 }
             } else {
-                return forbidden();
+                return notFound();
             }
         } else {
-            return notFound();
+            response().setHeader("WWW-Authenticate", "Basic realm=\"" + request().host() + "\"");
+            return unauthorized();
         }
     }
 
     public Result extendTimeout() {
-        DynamicForm params = DynamicForm.form().bindFromRequest();
-        String clientJid = params.get("clientJid");
-        String clientSecret = params.get("clientSecret");
+        UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
 
-        if (clientService.existByClientJid(clientJid)) {
-            Client client = clientService.findClientByClientJid(clientJid);
+        if (credentials != null) {
+            String clientJid = credentials.getUserName();
+            String clientSecret = credentials.getPassword();
 
-            if (client.getSecret().equals(clientSecret)) {
-                try {
-                    long messageId = Long.parseLong(params.get("messageId"));
-                    queueService.ackMessage(unconfirmedMessage.get(messageId));
+            DynamicForm params = DynamicForm.form().bindFromRequest();
+            if (clientService.existByClientJid(clientJid)) {
+                Client client = clientService.findClientByClientJid(clientJid);
 
-                    if (requeuers.containsKey(messageId)) {
-                        requeuers.get(messageId).cancel(true);
-                        requeuers.put(messageId, executorService.schedule(new Requeuer(queueService, messageId), 15, TimeUnit.MINUTES));
+                if (client.getSecret().equals(clientSecret)) {
+                    try {
+                        long messageId = Long.parseLong(params.get("messageId"));
+                        queueService.ackMessage(unconfirmedMessage.get(messageId));
+
+                        if (requeuers.containsKey(messageId)) {
+                            requeuers.get(messageId).cancel(true);
+                            requeuers.put(messageId, executorService.schedule(new Requeuer(queueService, messageId), 15, TimeUnit.MINUTES));
+                        }
+                        return ok();
+                    } catch (IOException | TimeoutException e) {
+                        throw new RuntimeException(e);
                     }
-                    return ok();
-                } catch (IOException | TimeoutException e) {
-                    throw new RuntimeException(e);
+                } else {
+                    return forbidden();
                 }
             } else {
-                return forbidden();
+                return notFound();
             }
         } else {
-            return notFound();
+            response().setHeader("WWW-Authenticate", "Basic realm=\"" + request().host() + "\"");
+            return unauthorized();
         }
     }
 }
