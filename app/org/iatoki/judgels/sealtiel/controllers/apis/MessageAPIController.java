@@ -31,7 +31,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.TimeUnit;
 
-@Transactional
 public final class MessageAPIController extends Controller {
 
     private final ScheduledThreadPoolExecutor executorService;
@@ -51,6 +50,7 @@ public final class MessageAPIController extends Controller {
     }
 
     @BodyParser.Of(value = BodyParser.FormUrlEncoded.class, maxLength = 512 * 1024 * 1024)
+    @Transactional
     public Result sendMessage() {
         UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
 
@@ -101,6 +101,7 @@ public final class MessageAPIController extends Controller {
         }
     }
 
+    @Transactional(readOnly = true)
     public Result getMessage() {
         UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
 
@@ -147,6 +148,7 @@ public final class MessageAPIController extends Controller {
         }
     }
 
+    @Transactional(readOnly = true)
     public Result confirmMessage() {
         UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
 
@@ -183,6 +185,7 @@ public final class MessageAPIController extends Controller {
         }
     }
 
+    @Transactional
     public Result sendRPCMessage() {
         UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
 
@@ -244,6 +247,7 @@ public final class MessageAPIController extends Controller {
         }
     }
 
+    @Transactional(readOnly = true)
     public Result extendTimeout() {
         UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
 
