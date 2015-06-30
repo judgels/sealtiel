@@ -21,13 +21,17 @@ import play.i18n.Messages;
 import play.mvc.Result;
 import play.mvc.Security;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.List;
 
 @Security.Authenticated(LoggedIn.class)
+@Named
 public final class ClientController extends BaseController {
 
-    private ClientService clientService;
+    private final ClientService clientService;
 
+    @Inject
     public ClientController(ClientService clientService) {
         this.clientService = clientService;
     }

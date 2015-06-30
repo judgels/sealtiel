@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 public final class RabbitmqImpl implements QueueService {
+
     private static RabbitmqImpl INSTANCE;
 
     private ConnectionFactory factory;

@@ -10,16 +10,22 @@ import org.iatoki.judgels.sealtiel.models.daos.ClientDao;
 import org.iatoki.judgels.sealtiel.models.entities.ClientModel;
 import org.iatoki.judgels.sealtiel.services.ClientService;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Singleton
+@Named("clientService")
 public final class ClientServiceImpl implements ClientService {
 
     private final ClientDao clientDao;
 
+    @Inject
     public ClientServiceImpl(ClientDao clientDao) {
         this.clientDao = clientDao;
     }

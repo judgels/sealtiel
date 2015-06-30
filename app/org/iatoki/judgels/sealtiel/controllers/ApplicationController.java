@@ -13,21 +13,14 @@ import play.data.Form;
 import play.i18n.Messages;
 import play.mvc.Result;
 
+import javax.inject.Named;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+@Named
 public final class ApplicationController extends BaseController {
 
     public ApplicationController() {
-
-    }
-
-    private Result showLogin(Form<LoginForm> form) {
-        LazyHtml content = new LazyHtml(indexView.render(form));
-        content.appendLayout(c -> centerLayout.render(c));
-        ControllerUtils.getInstance().appendTemplateLayout(content, "Login");
-
-        return ControllerUtils.getInstance().lazyOk(content);
     }
 
     public Result index() {
@@ -72,6 +65,14 @@ public final class ApplicationController extends BaseController {
                 new InternalLink(Messages.get("connection.connection"), routes.ApplicationController.checkRabbitmqConnection())
         ));
         ControllerUtils.getInstance().appendTemplateLayout(content, "System - Rabbitmq");
+
+        return ControllerUtils.getInstance().lazyOk(content);
+    }
+
+    private Result showLogin(Form<LoginForm> form) {
+        LazyHtml content = new LazyHtml(indexView.render(form));
+        content.appendLayout(c -> centerLayout.render(c));
+        ControllerUtils.getInstance().appendTemplateLayout(content, "Login");
 
         return ControllerUtils.getInstance().lazyOk(content);
     }

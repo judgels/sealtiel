@@ -1,77 +1,42 @@
 package org.iatoki.judgels.sealtiel;
 
-import com.google.common.collect.ImmutableMap;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-import org.iatoki.judgels.commons.JudgelsProperties;
-import org.iatoki.judgels.sealtiel.controllers.ApplicationController;
-import org.iatoki.judgels.sealtiel.controllers.ClientController;
-import org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController;
-import org.iatoki.judgels.sealtiel.models.daos.impls.ClientHibernateDao;
-import org.iatoki.judgels.sealtiel.models.daos.impls.MessageHibernateDao;
-import org.iatoki.judgels.sealtiel.models.daos.ClientDao;
-import org.iatoki.judgels.sealtiel.models.daos.MessageDao;
-import org.iatoki.judgels.sealtiel.services.ClientService;
-import org.iatoki.judgels.sealtiel.services.MessageService;
-import org.iatoki.judgels.sealtiel.services.impls.ClientServiceImpl;
-import org.iatoki.judgels.sealtiel.services.impls.MessageServiceImpl;
-import org.iatoki.judgels.sealtiel.services.impls.RabbitmqImpl;
+import org.iatoki.judgels.sealtiel.config.ControllerConfig;
+import org.iatoki.judgels.sealtiel.config.PersistenceConfig;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import play.Application;
 import play.libs.F;
-import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
-import java.util.Map;
+import java.util.Optional;
 
-public class Global extends org.iatoki.judgels.commons.Global {
-    private ClientDao clientDao;
-    private MessageDao messageDao;
+public final class Global extends org.iatoki.judgels.commons.Global {
 
-    private ClientService clientService;
-    private MessageService messageService;
-
-    private Map<Class<?>, Controller> controllersRegistry;
+    private ApplicationContext applicationContext;
 
     @Override
     public void onStart(Application application) {
-        buildDaos();
-        buildProperties();
-        buildServices();
-        buildControllers();
+        applicationContext = new AnnotationConfigApplicationContext(PersistenceConfig.class, ControllerConfig.class);
+        super.onStart(application);
     }
 
     @Override
     public <A> A getControllerInstance(Class<A> controllerClass) throws Exception {
-        return controllerClass.cast(controllersRegistry.get(controllerClass));
+        return getContextBean(controllerClass).orElse(super.getControllerInstance(controllerClass));
     }
 
-    private void buildDaos() {
-        clientDao = new ClientHibernateDao();
-        messageDao = new MessageHibernateDao();
-    }
-
-    private void buildProperties() {
-        Config config = ConfigFactory.load();
-
-        org.iatoki.judgels.sealtiel.BuildInfo$ buildInfo = org.iatoki.judgels.sealtiel.BuildInfo$.MODULE$;
-        JudgelsProperties.buildInstance(buildInfo.name(), buildInfo.version(), config);
-
-        SealtielProperties.buildInstance(config);
-    }
-
-    private void buildServices() {
-        clientService = new ClientServiceImpl(clientDao);
-        messageService = new MessageServiceImpl(messageDao);
-        RabbitmqImpl.buildInstance(SealtielProperties.getInstance().getRabbitmqHost(), SealtielProperties.getInstance().getRabbitmqPort(), SealtielProperties.getInstance().getRabbitmqUsername(), SealtielProperties.getInstance().getRabbitmqPassword(), SealtielProperties.getInstance().getRabbitmqVirtualHost());
-    }
-
-    private void buildControllers() {
-        controllersRegistry = ImmutableMap.<Class<?>, Controller> builder()
-                .put(ApplicationController.class, new ApplicationController())
-                .put(ClientController.class, new ClientController(clientService))
-                .put(MessageAPIController.class, new MessageAPIController(messageService, clientService, RabbitmqImpl.getInstance(), 10))
-                .build();
+    private <A> Optional<A> getContextBean(Class<A> controllerClass) throws Exception {
+        if (applicationContext == null) {
+            throw new Exception("Application Context not Initialized");
+        } else {
+            try {
+                return Optional.of(applicationContext.getBean(controllerClass));
+            } catch (NoSuchBeanDefinitionException ex) {
+                return Optional.empty();
+            }
+        }
     }
 
     @Override

@@ -7,6 +7,8 @@ import org.iatoki.judgels.sealtiel.models.entities.ClientModel;
 import org.iatoki.judgels.sealtiel.models.entities.ClientModel_;
 import play.db.jpa.JPA;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -14,6 +16,8 @@ import javax.persistence.metamodel.SingularAttribute;
 import java.util.Collection;
 import java.util.List;
 
+@Singleton
+@Named("clientDao")
 public final class ClientHibernateDao extends AbstractJudgelsHibernateDao<ClientModel> implements ClientDao {
 
     public ClientHibernateDao() {

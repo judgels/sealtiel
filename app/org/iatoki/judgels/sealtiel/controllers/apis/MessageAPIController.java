@@ -1,36 +1,39 @@
 package org.iatoki.judgels.sealtiel.controllers.apis;
 
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.iatoki.judgels.commons.JudgelsUtils;
 import org.iatoki.judgels.sealtiel.Client;
-import org.iatoki.judgels.sealtiel.services.ClientService;
+import org.iatoki.judgels.sealtiel.ClientMessage;
 import org.iatoki.judgels.sealtiel.GsonWrapper;
 import org.iatoki.judgels.sealtiel.Message;
-import org.iatoki.judgels.sealtiel.services.MessageService;
 import org.iatoki.judgels.sealtiel.QueueDeleter;
 import org.iatoki.judgels.sealtiel.QueueMessage;
-import org.iatoki.judgels.sealtiel.services.QueueService;
 import org.iatoki.judgels.sealtiel.Requeuer;
 import org.iatoki.judgels.sealtiel.UnconfirmedMessage;
-import org.iatoki.judgels.sealtiel.ClientMessage;
+import org.iatoki.judgels.sealtiel.services.ClientService;
+import org.iatoki.judgels.sealtiel.services.MessageService;
+import org.iatoki.judgels.sealtiel.services.QueueService;
 import play.data.DynamicForm;
 import play.db.jpa.Transactional;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+@Named
 public final class MessageAPIController extends Controller {
 
     private final ScheduledThreadPoolExecutor executorService;
@@ -40,12 +43,13 @@ public final class MessageAPIController extends Controller {
     private final ClientService clientService;
     private final QueueService queueService;
 
+    @Inject
     public MessageAPIController(MessageService messageService, ClientService clientService, QueueService queueService, int threadPool) {
         this.messageService = messageService;
         this.clientService = clientService;
         this.queueService = queueService;
         executorService = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(threadPool);
-        requeuers = new HashMap();
+        requeuers = Maps.newHashMap();
         unconfirmedMessage = UnconfirmedMessage.getInstance();
     }
 

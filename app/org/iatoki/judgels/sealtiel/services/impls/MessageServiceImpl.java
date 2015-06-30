@@ -6,10 +6,17 @@ import org.iatoki.judgels.sealtiel.models.daos.MessageDao;
 import org.iatoki.judgels.sealtiel.models.entities.MessageModel;
 import org.iatoki.judgels.sealtiel.services.MessageService;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+@Singleton
+@Named("messageService")
 public final class MessageServiceImpl implements MessageService {
 
     private final MessageDao messageDao;
 
+    @Inject
     public MessageServiceImpl(MessageDao messageDao) {
         this.messageDao = messageDao;
     }
