@@ -12,6 +12,8 @@ import org.iatoki.judgels.sealtiel.QueueDeleter;
 import org.iatoki.judgels.sealtiel.QueueMessage;
 import org.iatoki.judgels.sealtiel.Requeuer;
 import org.iatoki.judgels.sealtiel.UnconfirmedMessage;
+import org.iatoki.judgels.sealtiel.config.QueueThreadPool;
+import org.iatoki.judgels.sealtiel.config.RabbitMQService;
 import org.iatoki.judgels.sealtiel.services.ClientService;
 import org.iatoki.judgels.sealtiel.services.MessageService;
 import org.iatoki.judgels.sealtiel.services.QueueService;
@@ -44,7 +46,7 @@ public final class MessageAPIController extends Controller {
     private final QueueService queueService;
 
     @Inject
-    public MessageAPIController(MessageService messageService, ClientService clientService, QueueService queueService, int threadPool) {
+    public MessageAPIController(MessageService messageService, ClientService clientService, @RabbitMQService QueueService queueService, @QueueThreadPool int threadPool) {
         this.messageService = messageService;
         this.clientService = clientService;
         this.queueService = queueService;
