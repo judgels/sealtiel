@@ -11,7 +11,8 @@ lazy val sealtiel = (project in file("."))
         name := "sealtiel",
         version := IO.read(file("version.properties")).trim,
         scalaVersion := "2.11.7",
-        routesGenerator := InjectedRoutesGenerator
+        routesGenerator := InjectedRoutesGenerator,
+        PlayKeys.externalizeResources := false
     )
     .settings(TestNGPlugin.testNGSettings: _*)
     .settings(
