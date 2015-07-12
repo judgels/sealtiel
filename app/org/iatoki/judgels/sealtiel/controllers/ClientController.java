@@ -3,7 +3,7 @@ package org.iatoki.judgels.sealtiel.controllers;
 import com.google.common.collect.ImmutableList;
 import org.iatoki.judgels.play.InternalLink;
 import org.iatoki.judgels.play.LazyHtml;
-import org.iatoki.judgels.play.controllers.BaseController;
+import org.iatoki.judgels.play.controllers.AbstractJudgelsController;
 import org.iatoki.judgels.play.views.html.layouts.headingLayout;
 import org.iatoki.judgels.play.views.html.layouts.headingWithActionLayout;
 import org.iatoki.judgels.play.views.html.layouts.tabLayout;
@@ -27,7 +27,7 @@ import java.util.List;
 
 @Security.Authenticated(LoggedIn.class)
 @Named
-public final class ClientController extends BaseController {
+public final class ClientController extends AbstractJudgelsController {
 
     private final ClientService clientService;
 

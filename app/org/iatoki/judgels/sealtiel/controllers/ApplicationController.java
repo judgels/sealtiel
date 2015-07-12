@@ -3,7 +3,7 @@ package org.iatoki.judgels.sealtiel.controllers;
 import com.google.common.collect.ImmutableList;
 import org.iatoki.judgels.play.InternalLink;
 import org.iatoki.judgels.play.LazyHtml;
-import org.iatoki.judgels.play.controllers.BaseController;
+import org.iatoki.judgels.play.controllers.AbstractJudgelsController;
 import org.iatoki.judgels.play.views.html.layouts.centerLayout;
 import org.iatoki.judgels.sealtiel.controllers.forms.LoginForm;
 import org.iatoki.judgels.sealtiel.services.impls.RabbitmqImpl;
@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 @Named
-public final class ApplicationController extends BaseController {
+public final class ApplicationController extends AbstractJudgelsController {
 
     public ApplicationController() {
     }

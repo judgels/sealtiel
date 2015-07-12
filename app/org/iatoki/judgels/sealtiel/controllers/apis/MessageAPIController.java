@@ -3,7 +3,7 @@ package org.iatoki.judgels.sealtiel.controllers.apis;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.iatoki.judgels.play.JudgelsUtils;
+import org.iatoki.judgels.play.JudgelsPlayUtils;
 import org.iatoki.judgels.sealtiel.Client;
 import org.iatoki.judgels.sealtiel.ClientMessage;
 import org.iatoki.judgels.sealtiel.GsonWrapper;
@@ -58,7 +58,7 @@ public final class MessageAPIController extends Controller {
     @BodyParser.Of(value = BodyParser.FormUrlEncoded.class, maxLength = 512 * 1024 * 1024)
     @Transactional
     public Result sendMessage() {
-        UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
+        UsernamePasswordCredentials credentials = JudgelsPlayUtils.parseBasicAuthFromRequest(request());
 
         if (credentials != null) {
             String clientJid = credentials.getUserName();
@@ -109,7 +109,7 @@ public final class MessageAPIController extends Controller {
 
     @Transactional(readOnly = true)
     public Result getMessage() {
-        UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
+        UsernamePasswordCredentials credentials = JudgelsPlayUtils.parseBasicAuthFromRequest(request());
 
         if (credentials != null) {
             String clientJid = credentials.getUserName();
@@ -156,7 +156,7 @@ public final class MessageAPIController extends Controller {
 
     @Transactional(readOnly = true)
     public Result confirmMessage() {
-        UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
+        UsernamePasswordCredentials credentials = JudgelsPlayUtils.parseBasicAuthFromRequest(request());
 
         if (credentials != null) {
             String clientJid = credentials.getUserName();
@@ -193,7 +193,7 @@ public final class MessageAPIController extends Controller {
 
     @Transactional
     public Result sendRPCMessage() {
-        UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
+        UsernamePasswordCredentials credentials = JudgelsPlayUtils.parseBasicAuthFromRequest(request());
 
         if (credentials != null) {
             String clientJid = credentials.getUserName();
@@ -255,7 +255,7 @@ public final class MessageAPIController extends Controller {
 
     @Transactional(readOnly = true)
     public Result extendTimeout() {
-        UsernamePasswordCredentials credentials = JudgelsUtils.parseBasicAuthFromRequest(request());
+        UsernamePasswordCredentials credentials = JudgelsPlayUtils.parseBasicAuthFromRequest(request());
 
         if (credentials != null) {
             String clientJid = credentials.getUserName();

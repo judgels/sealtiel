@@ -1,6 +1,6 @@
 package org.iatoki.judgels.sealtiel.models.daos.impls;
 
-import org.iatoki.judgels.play.models.daos.hibernate.AbstractJudgelsHibernateDao;
+import org.iatoki.judgels.play.models.daos.impls.AbstractJudgelsHibernateDao;
 import org.iatoki.judgels.sealtiel.models.daos.MessageDao;
 import org.iatoki.judgels.sealtiel.models.entities.MessageModel;
 

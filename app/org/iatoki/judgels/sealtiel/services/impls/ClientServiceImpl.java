@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.iatoki.judgels.play.IdentityUtils;
-import org.iatoki.judgels.play.JudgelsUtils;
+import org.iatoki.judgels.play.JudgelsPlayUtils;
 import org.iatoki.judgels.sealtiel.Client;
 import org.iatoki.judgels.sealtiel.models.daos.ClientDao;
 import org.iatoki.judgels.sealtiel.models.entities.ClientModel;
@@ -43,7 +43,7 @@ public final class ClientServiceImpl implements ClientService {
         clientModel.acquaintances = "";
         clientModel.totalDownload = 0;
         clientModel.lastDownloadTime = System.currentTimeMillis();
-        clientModel.secret = JudgelsUtils.hashMD5(UUID.randomUUID().toString());
+        clientModel.secret = JudgelsPlayUtils.hashMD5(UUID.randomUUID().toString());
 
         clientDao.persist(clientModel, IdentityUtils.getUserJid(), IdentityUtils.getIpAddress());
     }
