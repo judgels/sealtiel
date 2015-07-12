@@ -1,24 +1,25 @@
-package org.iatoki.judgels.sealtiel;
+package org.iatoki.judgels.sealtiel.runnables;
 
+import org.iatoki.judgels.sealtiel.UnconfirmedMessage;
 import org.iatoki.judgels.sealtiel.services.QueueService;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public final class QueueDeleter implements Runnable {
+public final class Requeuer implements Runnable {
 
     private final QueueService queueService;
-    private final String queueName;
+    private final long messageId;
 
-    public QueueDeleter(QueueService queueService, String queueName) {
+    public Requeuer(QueueService queueService, long messageId) {
         this.queueService = queueService;
-        this.queueName = queueName;
+        this.messageId = messageId;
     }
 
     @Override
     public void run() {
         try {
-            queueService.deleteQueue(queueName);
+            queueService.requeueMessage(UnconfirmedMessage.getInstance().get(messageId));
         } catch (IOException | TimeoutException e) {
             throw new RuntimeException(e);
         }
