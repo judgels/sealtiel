@@ -5,7 +5,7 @@ import play.libs.F;
 import play.mvc.Http;
 import play.mvc.Result;
 
-public final class Global extends org.iatoki.judgels.commons.Global {
+public final class Global extends org.iatoki.judgels.play.Global {
 
     @Override
     public void onStart(Application application) {

@@ -3,7 +3,7 @@ package org.iatoki.judgels.sealtiel.controllers.apis;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.iatoki.judgels.commons.JudgelsUtils;
+import org.iatoki.judgels.play.JudgelsUtils;
 import org.iatoki.judgels.sealtiel.Client;
 import org.iatoki.judgels.sealtiel.ClientMessage;
 import org.iatoki.judgels.sealtiel.GsonWrapper;

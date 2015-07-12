@@ -1,6 +1,6 @@
 package org.iatoki.judgels.sealtiel.services.impls;
 
-import org.iatoki.judgels.commons.IdentityUtils;
+import org.iatoki.judgels.play.IdentityUtils;
 import org.iatoki.judgels.sealtiel.Message;
 import org.iatoki.judgels.sealtiel.models.daos.MessageDao;
 import org.iatoki.judgels.sealtiel.models.entities.MessageModel;

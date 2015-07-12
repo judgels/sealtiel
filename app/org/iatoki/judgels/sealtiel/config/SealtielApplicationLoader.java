@@ -2,7 +2,7 @@ package org.iatoki.judgels.sealtiel.config;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import org.iatoki.judgels.commons.JudgelsProperties;
+import org.iatoki.judgels.play.JudgelsProperties;
 import org.iatoki.judgels.sealtiel.SealtielProperties;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.inject.guice.GuiceApplicationLoader;

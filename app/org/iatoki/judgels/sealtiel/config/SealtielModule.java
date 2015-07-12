@@ -1,6 +1,6 @@
 package org.iatoki.judgels.sealtiel.config;
 
-import org.iatoki.judgels.commons.config.JudgelsAbstractModule;
+import org.iatoki.judgels.play.config.JudgelsAbstractModule;
 import org.iatoki.judgels.sealtiel.SealtielProperties;
 import org.iatoki.judgels.sealtiel.services.QueueService;
 import org.iatoki.judgels.sealtiel.services.impls.RabbitmqImpl;
