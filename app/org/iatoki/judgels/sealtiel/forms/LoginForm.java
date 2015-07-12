@@ -1,7 +1,6 @@
-package org.iatoki.judgels.sealtiel.controllers.forms;
+package org.iatoki.judgels.sealtiel.forms;
 
 import org.iatoki.judgels.sealtiel.SealtielProperties;
-import play.Play;
 import play.data.validation.Constraints;
 
 public class LoginForm {

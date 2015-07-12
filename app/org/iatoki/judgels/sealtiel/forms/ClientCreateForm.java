@@ -1,4 +1,4 @@
-package org.iatoki.judgels.sealtiel.controllers.forms;
+package org.iatoki.judgels.sealtiel.forms;
 
 import play.data.validation.Constraints;
 
