@@ -5,7 +5,7 @@ import org.iatoki.judgels.play.InternalLink;
 import org.iatoki.judgels.play.LazyHtml;
 import org.iatoki.judgels.play.controllers.AbstractJudgelsController;
 import org.iatoki.judgels.play.views.html.layouts.centerLayout;
-import org.iatoki.judgels.sealtiel.controllers.forms.LoginForm;
+import org.iatoki.judgels.sealtiel.forms.LoginForm;
 import org.iatoki.judgels.sealtiel.services.impls.RabbitmqImpl;
 import org.iatoki.judgels.sealtiel.views.html.connection.connectionView;
 import org.iatoki.judgels.sealtiel.views.html.indexView;
