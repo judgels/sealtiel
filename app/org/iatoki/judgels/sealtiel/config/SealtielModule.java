@@ -1,11 +1,11 @@
 package org.iatoki.judgels.sealtiel.config;
 
-import org.iatoki.judgels.play.config.AbstractJudgelsModule;
+import org.iatoki.judgels.play.config.AbstractJudgelsPlayModule;
 import org.iatoki.judgels.sealtiel.SealtielProperties;
 import org.iatoki.judgels.sealtiel.services.QueueService;
 import org.iatoki.judgels.sealtiel.services.impls.RabbitmqImpl;
 
-public class SealtielModule extends AbstractJudgelsModule {
+public class SealtielModule extends AbstractJudgelsPlayModule {
 
     @Override
     protected void manualBinding() {
