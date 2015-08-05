@@ -1,0 +1,25 @@
+login.login=Login
+login.username=Username
+login.password=Password
+login.logIn = Log in
+
+client.client=Client
+client.clients=Clients
+client.list=Clients
+client.jid=JID
+client.secret=Secret
+client.name=Name
+
+client.create=Create Client
+client.view=View Client
+
+acquaintance.name=Name
+acquaintance.jid=JID
+acquaintance.acquaintance=Acquaintance
+acquaintance.acquaintances=Acquaintances
+acquaintance.add=Add Acquaintance
+
+connection.connection=Connection
+connection.status=Connection Status
+connection.connected=Connected to RabbitMQ
+connection.notConnected=Not connected to RabbitMQ

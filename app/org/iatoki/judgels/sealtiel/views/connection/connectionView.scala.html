@@ -1,0 +1,11 @@
+@(isConnected: java.lang.Boolean)
+
+@import play.i18n.Messages
+
+<h2>@Messages.get("connection.status")</h2>
+
+@if(isConnected) {
+    <p>@Messages.get("connection.connected")</p>
+}else {
+    <p>@Messages.get("connection.notConnected")</p>
+}

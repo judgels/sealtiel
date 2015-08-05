@@ -1,0 +1,12 @@
+@(newClientForm: Form[org.iatoki.judgels.sealtiel.forms.ClientCreateForm])
+
+@import play.i18n.Messages
+
+@implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-md-3", "col-md-9") }
+
+@b3.form(action = org.iatoki.judgels.sealtiel.controllers.routes.ClientController.postCreateClient()) {
+    @b3.text(newClientForm("name"), 'class->"form-control", '_label->Messages.get("client.name"))
+
+    @b3.submit('class -> "btn btn-primary") { @Messages.get("commons.create") }
+}
+

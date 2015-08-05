@@ -1,0 +1,27 @@
+@(clients: List[org.iatoki.judgels.sealtiel.Client])
+
+@import play.i18n.Messages
+@import org.iatoki.judgels.sealtiel.controllers.routes
+
+<div class="table-responsive">
+    <table class="table table-hover table-condensed table-bordered">
+        <tr>
+            <th>@Messages.get("commons.id")</th>
+            <th>@Messages.get("client.name")</th>
+            <th>@Messages.get("client.jid")</th>
+            <th>@Messages.get("client.secret")</th>
+            <th></th>
+        </tr>
+        @for(client <- clients) {
+            <tr>
+                <td>@client.getId</td>
+                <td>@client.getName</td>
+                <td>@client.getJid</td>
+                <td>@client.getSecret</td>
+                <td>
+                    <a href="@routes.ClientController.viewClient(client.getId)"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

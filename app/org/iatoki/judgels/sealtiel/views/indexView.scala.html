@@ -1,0 +1,21 @@
+@(form: Form[org.iatoki.judgels.sealtiel.forms.LoginForm])
+
+@import play.i18n.Messages
+@import org.iatoki.judgels.sealtiel.controllers.routes
+@import org.iatoki.judgels.play.views.html.formErrorView
+
+@implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-md-3", "col-md-9") }
+
+<div class="row login-content">
+    <div class="col-md-12">
+        <h2>@Messages.get("login.login")</h2>
+
+        @formErrorView(form)
+
+        @b3.form(routes.ApplicationController.login()) {
+            @b3.text(form("username"), '_label -> Messages.get("login.username"))
+            @b3.password(form("password"), '_label -> Messages.get("login.password"))
+            @b3.submit('class -> "btn btn-primary") { @Messages.get("login.logIn") }
+        }
+    </div>
+</div>
