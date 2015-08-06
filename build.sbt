@@ -42,5 +42,5 @@ lazy val sealtiel = (project in file("."))
         buildInfoPackage := "org.iatoki.judgels.sealtiel"
     )
 
-lazy val playcommons = RootProject(file("../judgels-play-commons"))
-lazy val sealtielcommons = RootProject(file("../judgels-sealtiel-commons"))
+lazy val playcommons = RootProject(file("../playcommons"))
+lazy val sealtielcommons = RootProject(file("../sealtielcommons"))
