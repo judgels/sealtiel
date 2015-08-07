@@ -6,11 +6,14 @@ public final class GsonWrapper {
 
     private static Gson INSTANCE;
 
+    private GsonWrapper() {
+        // prevent instantiation
+    }
+
     public static Gson getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new Gson();
         }
         return INSTANCE;
     }
-
 }

@@ -105,7 +105,7 @@ public final class RabbitmqImpl implements QueueService {
         channel.queueDelete(queueName);
     }
 
-    public synchronized static void buildInstance(String host, int port, String username, String password, String virtualHost) {
+    public static synchronized void buildInstance(String host, int port, String username, String password, String virtualHost) {
         if (INSTANCE == null) {
             INSTANCE = new RabbitmqImpl(host, port, username, password, virtualHost);
         } else {

@@ -7,17 +7,16 @@ import play.mvc.Security;
 public final class LoggedIn extends Security.Authenticator {
 
     @Override
-        public String getUsername(Context ctx) {
-        if ((ctx.session().get("username")!=null) && ("sealtiel".equals(ctx.session().get("username")))) {
+    public String getUsername(Context ctx) {
+        if ((ctx.session().get("username") != null) && ("sealtiel".equals(ctx.session().get("username")))) {
             return ctx.session().get("username");
         } else {
             return null;
         }
-        }
+    }
 
-        @Override
-        public Result onUnauthorized(Context ctx) {
-                return forbidden();
-        }
-
+    @Override
+    public Result onUnauthorized(Context ctx) {
+        return forbidden();
+    }
 }

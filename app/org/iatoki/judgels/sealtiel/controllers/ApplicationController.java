@@ -24,7 +24,7 @@ public final class ApplicationController extends AbstractJudgelsController {
     }
 
     public Result index() {
-        if (session("username")!=null) {
+        if (session("username") != null) {
             return redirect(routes.ClientController.index());
         } else {
             return showLogin(Form.form(LoginForm.class));
