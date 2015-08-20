@@ -41,7 +41,7 @@ public final class RabbitmqImpl implements QueueService {
     }
 
     public boolean isConnected() {
-        return ((connection != null) && (channel != null) && (connection.isOpen()) && (channel.isOpen()));
+        return ((connection != null) && (channel != null) && connection.isOpen() && channel.isOpen());
     }
 
     @Override

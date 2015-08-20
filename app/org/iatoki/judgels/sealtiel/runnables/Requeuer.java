@@ -8,12 +8,12 @@ import java.util.concurrent.TimeoutException;
 
 public final class Requeuer implements Runnable {
 
-    private final QueueService queueService;
     private final long messageId;
+    private final QueueService queueService;
 
-    public Requeuer(QueueService queueService, long messageId) {
-        this.queueService = queueService;
+    public Requeuer(long messageId, QueueService queueService) {
         this.messageId = messageId;
+        this.queueService = queueService;
     }
 
     @Override

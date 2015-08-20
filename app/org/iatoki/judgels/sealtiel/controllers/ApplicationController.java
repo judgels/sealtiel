@@ -20,26 +20,23 @@ import java.util.concurrent.TimeoutException;
 @Named
 public final class ApplicationController extends AbstractJudgelsController {
 
-    public ApplicationController() {
-    }
-
     public Result index() {
         if (session("username") != null) {
             return redirect(routes.ClientController.index());
-        } else {
-            return showLogin(Form.form(LoginForm.class));
         }
+
+        return showLogin(Form.form(LoginForm.class));
     }
 
     public Result login() {
         Form<LoginForm> loginForm = Form.form(LoginForm.class).bindFromRequest();
-        if (loginForm.hasErrors()) {
+        if (formHasErrors(loginForm)) {
             return showLogin(loginForm);
-        } else {
-            session().clear();
-            session("username", "sealtiel");
-            return redirect(routes.ClientController.index());
         }
+
+        session().clear();
+        session("username", "sealtiel");
+        return redirect(routes.ClientController.index());
     }
 
     public Result logout() {

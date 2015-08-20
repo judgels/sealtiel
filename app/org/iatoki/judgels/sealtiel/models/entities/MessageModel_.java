@@ -16,5 +16,4 @@ public abstract class MessageModel_ extends AbstractJudgelsModel_ {
         public static volatile SingularAttribute<MessageModel, String> sourceClientJid;
         public static volatile SingularAttribute<MessageModel, String> message;
         public static volatile SingularAttribute<MessageModel, Integer> priority;
-
 }

@@ -4,6 +4,7 @@ import org.iatoki.judgels.sealtiel.SealtielProperties;
 import play.data.validation.Constraints;
 
 public class LoginForm {
+
     @Constraints.Required
     public String username;
 

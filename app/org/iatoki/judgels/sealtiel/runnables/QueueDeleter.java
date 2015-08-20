@@ -7,12 +7,12 @@ import java.util.concurrent.TimeoutException;
 
 public final class QueueDeleter implements Runnable {
 
-    private final QueueService queueService;
     private final String queueName;
+    private final QueueService queueService;
 
-    public QueueDeleter(QueueService queueService, String queueName) {
-        this.queueService = queueService;
+    public QueueDeleter(String queueName, QueueService queueService) {
         this.queueName = queueName;
+        this.queueService = queueService;
     }
 
     @Override

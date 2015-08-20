@@ -1,8 +1,9 @@
-@(client: org.iatoki.judgels.sealtiel.Client, clients: List[org.iatoki.judgels.sealtiel.Client], acquaintances: List[org.iatoki.judgels.sealtiel.Client])
-
 @import play.i18n.Messages
+@import org.iatoki.judgels.sealtiel.Client
 @import org.iatoki.judgels.sealtiel.controllers.routes
 @import b3.inline.fieldConstructor
+
+@(client: Client, clients: List[Client], acquaintances: List[Client])
 
 <h3>@Messages.get("acquaintance.add")</h3>
 

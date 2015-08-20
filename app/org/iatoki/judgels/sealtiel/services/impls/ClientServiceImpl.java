@@ -31,7 +31,7 @@ public final class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client findClientByClientId(long clientId) {
+    public Client findClientById(long clientId) {
         ClientModel clientModel = clientDao.findById(clientId);
         return createClientFromModel(clientModel);
     }
@@ -49,27 +49,28 @@ public final class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<Client> findAllClient() {
-        List<ClientModel> clientModels = clientDao.findAll();
+    public List<Client> getAllClients() {
+        List<ClientModel> clientModels = clientDao.getAll();
 
         return clientModels.stream().map(c -> new Client(c.id, c.jid, c.secret, c.name, Arrays.asList(c.acquaintances.split(",")), c.totalDownload, c.lastDownloadTime)).collect(Collectors.toList());
     }
 
     @Override
-    public boolean existByClientJid(String clientJid) {
+    public boolean existsByClientJid(String clientJid) {
         return clientDao.existsByJid(clientJid);
     }
 
     @Override
-    public Client findClientByClientJid(String clientJid) {
+    public Client findClientByJid(String clientJid) {
         ClientModel clientModel = clientDao.findByJid(clientJid);
+
         return createClientFromModel(clientModel);
     }
 
     @Override
-    public List<Client> findClientsByClientJids(List<String> clientJids) {
+    public List<Client> findClientsByJids(List<String> clientJids) {
         ImmutableList.Builder<Client> result = ImmutableList.builder();
-        List<ClientModel> clientModels = clientDao.findClientsByClientJids(clientJids);
+        List<ClientModel> clientModels = clientDao.getByJids(clientJids);
 
         for (ClientModel clientModel : clientModels) {
             result.add(createClientFromModel(clientModel));
@@ -88,7 +89,7 @@ public final class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void addAcquaintance(String clientJid, String acquaintance) {
+    public void addClientAcquaintance(String clientJid, String acquaintance) {
         ClientModel clientModel = clientDao.findByJid(clientJid);
         List<String> list = null;
         if (!"".equals(clientModel.acquaintances)) {
@@ -103,7 +104,7 @@ public final class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void removeAcquaintance(String clientJid, String acquaintance) {
+    public void removeClientAcquaintance(String clientJid, String acquaintance) {
         ClientModel clientModel = clientDao.findByJid(clientJid);
         if (!"".equals(clientModel.acquaintances)) {
             List<String> list = Lists.newArrayList(clientModel.acquaintances.split(","));

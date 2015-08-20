@@ -3,6 +3,7 @@ package org.iatoki.judgels.sealtiel;
 import com.typesafe.config.Config;
 
 public final class SealtielProperties {
+
     private static SealtielProperties INSTANCE;
 
     private final Config config;

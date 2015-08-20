@@ -38,7 +38,7 @@ public final class ClientController extends AbstractJudgelsController {
 
     @Transactional(readOnly = true)
     public Result index() {
-        LazyHtml content = new LazyHtml(listClientsView.render(clientService.findAllClient()));
+        LazyHtml content = new LazyHtml(listClientsView.render(clientService.getAllClients()));
         content.appendLayout(c -> headingWithActionLayout.render(Messages.get("client.list"), new InternalLink(Messages.get("commons.create"), routes.ClientController.createClient()), c));
         ControllerUtils.getInstance().appendSidebarLayout(content);
         ControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
@@ -55,62 +55,62 @@ public final class ClientController extends AbstractJudgelsController {
 
     @Transactional
     public Result postCreateClient() {
-        Form<ClientCreateForm> newClientForm = Form.form(ClientCreateForm.class).bindFromRequest();
-        if (newClientForm.hasErrors()) {
-            return showCreateClient(newClientForm);
-        } else {
-            ClientCreateForm data = newClientForm.get();
-            clientService.createClient(data.name);
-            return redirect(routes.ClientController.index());
+        Form<ClientCreateForm> clientCreateForm = Form.form(ClientCreateForm.class).bindFromRequest();
+        if (formHasErrors(clientCreateForm)) {
+            return showCreateClient(clientCreateForm);
         }
 
+        ClientCreateForm clientCreateData = clientCreateForm.get();
+        clientService.createClient(clientCreateData.name);
+
+        return redirect(routes.ClientController.index());
     }
 
     @Transactional(readOnly = true)
     public Result viewClient(long clientId) {
-        Client client = clientService.findClientByClientId(clientId);
-        if (client != null) {
-            List<Client> acquaintances = clientService.findClientsByClientJids(client.getAcquaintances());
-            LazyHtml content = new LazyHtml(viewClientView.render(client, clientService.findAllClient(), acquaintances));
-            content.appendLayout(c -> tabLayout.render(ImmutableList.of(new InternalLink(Messages.get("acquaintance.acquaintances"), routes.ClientController.viewClient(client.getId()))), c));
-            ControllerUtils.getInstance().appendSidebarLayout(content);
-            ControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
-                  new InternalLink(Messages.get("client.clients"), routes.ClientController.index()),
-                  new InternalLink(Messages.get("client.view"), routes.ClientController.viewClient(client.getId()))
-            ));
-            ControllerUtils.getInstance().appendTemplateLayout(content, "Client - View");
-
-            return ControllerUtils.getInstance().lazyOk(content);
-        } else {
+        Client client = clientService.findClientById(clientId);
+        if (client == null) {
             return notFound();
         }
+
+        List<Client> acquaintances = clientService.findClientsByJids(client.getAcquaintances());
+
+        LazyHtml content = new LazyHtml(viewClientView.render(client, clientService.getAllClients(), acquaintances));
+        content.appendLayout(c -> tabLayout.render(ImmutableList.of(new InternalLink(Messages.get("acquaintance.acquaintances"), routes.ClientController.viewClient(client.getId()))), c));
+        ControllerUtils.getInstance().appendSidebarLayout(content);
+        ControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
+              new InternalLink(Messages.get("client.clients"), routes.ClientController.index()),
+              new InternalLink(Messages.get("client.view"), routes.ClientController.viewClient(client.getId()))
+        ));
+        ControllerUtils.getInstance().appendTemplateLayout(content, "Client - View");
+
+        return ControllerUtils.getInstance().lazyOk(content);
     }
 
     @Transactional
     public Result addClientAcquaintance(long clientId) {
-        Client client = clientService.findClientByClientId(clientId);
-        if (client != null) {
-            DynamicForm form = DynamicForm.form().bindFromRequest();
-            String acquaintanceChannel = form.get("acquaintance");
-            clientService.addAcquaintance(client.getJid(), acquaintanceChannel);
-
-            return redirect(routes.ClientController.viewClient(clientId));
-        } else {
+        Client client = clientService.findClientById(clientId);
+        if (client == null) {
             return notFound();
         }
+
+        DynamicForm dForm = DynamicForm.form().bindFromRequest();
+        String acquaintanceChannel = dForm.get("acquaintance");
+        clientService.addClientAcquaintance(client.getJid(), acquaintanceChannel);
+
+        return redirect(routes.ClientController.viewClient(clientId));
     }
 
     @Transactional
     public Result removeClientAcquaintance(long clientId, String acquaintanceChannel) {
-        Client client = clientService.findClientByClientId(clientId);
-        if (client != null) {
-
-            clientService.removeAcquaintance(client.getJid(), acquaintanceChannel);
-
-            return redirect(routes.ClientController.viewClient(clientId));
-        } else {
+        Client client = clientService.findClientById(clientId);
+        if (client == null) {
             return notFound();
         }
+
+        clientService.removeClientAcquaintance(client.getJid(), acquaintanceChannel);
+
+        return redirect(routes.ClientController.viewClient(clientId));
     }
 
     private Result showCreateClient(Form<ClientCreateForm> form) {
