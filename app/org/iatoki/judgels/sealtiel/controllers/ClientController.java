@@ -40,13 +40,13 @@ public final class ClientController extends AbstractJudgelsController {
     public Result index() {
         LazyHtml content = new LazyHtml(listClientsView.render(clientService.getAllClients()));
         content.appendLayout(c -> headingWithActionLayout.render(Messages.get("client.list"), new InternalLink(Messages.get("commons.create"), routes.ClientController.createClient()), c));
-        ControllerUtils.getInstance().appendSidebarLayout(content);
-        ControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
+        SealtielControllerUtils.getInstance().appendSidebarLayout(content);
+        SealtielControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
               new InternalLink(Messages.get("client.clients"), routes.ClientController.index())
         ));
-        ControllerUtils.getInstance().appendTemplateLayout(content, "Clients");
+        SealtielControllerUtils.getInstance().appendTemplateLayout(content, "Clients");
 
-        return ControllerUtils.getInstance().lazyOk(content);
+        return SealtielControllerUtils.getInstance().lazyOk(content);
     }
 
     public Result createClient() {
@@ -77,14 +77,14 @@ public final class ClientController extends AbstractJudgelsController {
 
         LazyHtml content = new LazyHtml(viewClientView.render(client, clientService.getAllClients(), acquaintances));
         content.appendLayout(c -> tabLayout.render(ImmutableList.of(new InternalLink(Messages.get("acquaintance.acquaintances"), routes.ClientController.viewClient(client.getId()))), c));
-        ControllerUtils.getInstance().appendSidebarLayout(content);
-        ControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
+        SealtielControllerUtils.getInstance().appendSidebarLayout(content);
+        SealtielControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
               new InternalLink(Messages.get("client.clients"), routes.ClientController.index()),
               new InternalLink(Messages.get("client.view"), routes.ClientController.viewClient(client.getId()))
         ));
-        ControllerUtils.getInstance().appendTemplateLayout(content, "Client - View");
+        SealtielControllerUtils.getInstance().appendTemplateLayout(content, "Client - View");
 
-        return ControllerUtils.getInstance().lazyOk(content);
+        return SealtielControllerUtils.getInstance().lazyOk(content);
     }
 
     @Transactional
@@ -116,13 +116,13 @@ public final class ClientController extends AbstractJudgelsController {
     private Result showCreateClient(Form<ClientCreateForm> form) {
         LazyHtml content = new LazyHtml(createClientView.render(form));
         content.appendLayout(c -> headingLayout.render(Messages.get("client.create"), c));
-        ControllerUtils.getInstance().appendSidebarLayout(content);
-        ControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
+        SealtielControllerUtils.getInstance().appendSidebarLayout(content);
+        SealtielControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
               new InternalLink(Messages.get("client.clients"), routes.ClientController.index()),
               new InternalLink(Messages.get("client.create"), routes.ClientController.createClient())
         ));
-        ControllerUtils.getInstance().appendTemplateLayout(content, "Client - Create");
+        SealtielControllerUtils.getInstance().appendTemplateLayout(content, "Client - Create");
 
-        return ControllerUtils.getInstance().lazyOk(content);
+        return SealtielControllerUtils.getInstance().lazyOk(content);
     }
 }

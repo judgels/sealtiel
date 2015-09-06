@@ -57,20 +57,20 @@ public final class ApplicationController extends AbstractJudgelsController {
         }
 
         LazyHtml content = new LazyHtml(connectionView.render(status));
-        ControllerUtils.getInstance().appendSidebarLayout(content);
-        ControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
+        SealtielControllerUtils.getInstance().appendSidebarLayout(content);
+        SealtielControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
                 new InternalLink(Messages.get("connection.connection"), routes.ApplicationController.checkRabbitmqConnection())
         ));
-        ControllerUtils.getInstance().appendTemplateLayout(content, "System - Rabbitmq");
+        SealtielControllerUtils.getInstance().appendTemplateLayout(content, "System - Rabbitmq");
 
-        return ControllerUtils.getInstance().lazyOk(content);
+        return SealtielControllerUtils.getInstance().lazyOk(content);
     }
 
     private Result showLogin(Form<LoginForm> form) {
         LazyHtml content = new LazyHtml(indexView.render(form));
         content.appendLayout(c -> centerLayout.render(c));
-        ControllerUtils.getInstance().appendTemplateLayout(content, "Login");
+        SealtielControllerUtils.getInstance().appendTemplateLayout(content, "Login");
 
-        return ControllerUtils.getInstance().lazyOk(content);
+        return SealtielControllerUtils.getInstance().lazyOk(content);
     }
 }

@@ -8,11 +8,11 @@ import org.iatoki.judgels.play.views.html.layouts.sidebarLayout;
 import org.iatoki.judgels.play.views.html.layouts.menusView;
 import play.i18n.Messages;
 
-public final class ControllerUtils extends AbstractJudgelsControllerUtils {
+public final class SealtielControllerUtils extends AbstractJudgelsControllerUtils {
 
-    private static final ControllerUtils INSTANCE = new ControllerUtils();
+    private static final SealtielControllerUtils INSTANCE = new SealtielControllerUtils();
 
-    private ControllerUtils() {
+    private SealtielControllerUtils() {
 
     }
 
@@ -26,7 +26,7 @@ public final class ControllerUtils extends AbstractJudgelsControllerUtils {
         content.appendLayout(c -> sidebarLayout.render(sidebarContent.render(), c));
     }
 
-    public static ControllerUtils getInstance() {
+    public static SealtielControllerUtils getInstance() {
         return INSTANCE;
     }
 }
