@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.iatoki.judgels.play.JudgelsPlayUtils;
-import org.iatoki.judgels.play.controllers.apis.AbstractJudgelsAPIController;
 import org.iatoki.judgels.sealtiel.Client;
 import org.iatoki.judgels.sealtiel.ClientMessage;
 import org.iatoki.judgels.sealtiel.GsonWrapper;
@@ -21,6 +20,7 @@ import org.iatoki.judgels.sealtiel.services.QueueService;
 import play.data.DynamicForm;
 import play.db.jpa.Transactional;
 import play.mvc.BodyParser;
+import play.mvc.Controller;
 import play.mvc.Result;
 
 import javax.inject.Inject;
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @Named
-public final class MessageAPIController extends AbstractJudgelsAPIController {
+public final class MessageAPIController extends Controller {
 
     private final ClientService clientService;
     private final ScheduledThreadPoolExecutor executorService;
