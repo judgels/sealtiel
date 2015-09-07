@@ -5,12 +5,15 @@ import sbtbuildinfo.Plugin._
 lazy val sealtiel = (project in file("."))
     .enablePlugins(PlayJava, SbtWeb)
     .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
-    .dependsOn(playcommons, sealtielcommons)
-    .aggregate(playcommons, sealtielcommons)
+    .dependsOn(playcommons)
+    .aggregate(playcommons)
     .settings(
         name := "sealtiel",
         version := IO.read(file("version.properties")).trim,
         scalaVersion := "2.11.7",
+        libraryDependencies ++= Seq(
+            "com.rabbitmq" % "amqp-client" % "3.5.3"
+        ),
         routesGenerator := InjectedRoutesGenerator,
         PlayKeys.externalizeResources := false
     )
@@ -43,4 +46,3 @@ lazy val sealtiel = (project in file("."))
     )
 
 lazy val playcommons = RootProject(file("../play-commons"))
-lazy val sealtielcommons = RootProject(file("../sealtiel-commons"))

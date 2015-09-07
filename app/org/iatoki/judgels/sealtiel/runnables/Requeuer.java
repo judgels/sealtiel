@@ -1,6 +1,6 @@
 package org.iatoki.judgels.sealtiel.runnables;
 
-import org.iatoki.judgels.sealtiel.UnconfirmedMessage;
+import org.iatoki.judgels.sealtiel.UnacknowledgedMessages;
 import org.iatoki.judgels.sealtiel.services.QueueService;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ public final class Requeuer implements Runnable {
     @Override
     public void run() {
         try {
-            queueService.requeueMessage(UnconfirmedMessage.getInstance().get(messageId));
+            queueService.requeueMessage(UnacknowledgedMessages.getInstance().get(messageId));
         } catch (IOException | TimeoutException e) {
             throw new RuntimeException(e);
         }

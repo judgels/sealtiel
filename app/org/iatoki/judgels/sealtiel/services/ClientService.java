@@ -1,16 +1,15 @@
 package org.iatoki.judgels.sealtiel.services;
 
+import org.iatoki.judgels.play.services.JudgelsAppClientService;
 import org.iatoki.judgels.sealtiel.Client;
 
 import java.util.List;
 
-public interface ClientService {
+public interface ClientService extends JudgelsAppClientService {
 
     void createClient(String name);
 
     List<Client> getAllClients();
-
-    boolean existsByClientJid(String clientJid);
 
     Client findClientById(long clientId);
 

@@ -1,23 +1,22 @@
-->      /                                   playcommons.Routes
+->      /                                               playcommons.Routes
 
 
 # Home page
-GET     /                                   @org.iatoki.judgels.sealtiel.controllers.ApplicationController.index()
-POST    /login                              @org.iatoki.judgels.sealtiel.controllers.ApplicationController.login()
-GET     /logout                             @org.iatoki.judgels.sealtiel.controllers.ApplicationController.logout()
-GET     /connection                         @org.iatoki.judgels.sealtiel.controllers.ApplicationController.checkRabbitmqConnection()
+GET     /                                               @org.iatoki.judgels.sealtiel.controllers.ApplicationController.index()
+POST    /login                                          @org.iatoki.judgels.sealtiel.controllers.ApplicationController.login()
+GET     /logout                                         @org.iatoki.judgels.sealtiel.controllers.ApplicationController.logout()
+GET     /connection                                     @org.iatoki.judgels.sealtiel.controllers.ApplicationController.checkRabbitmqConnection()
 
-GET     /clients/                           @org.iatoki.judgels.sealtiel.controllers.ClientController.index()
-GET     /clients/create                     @org.iatoki.judgels.sealtiel.controllers.ClientController.createClient()
-POST    /clients/add                        @org.iatoki.judgels.sealtiel.controllers.ClientController.postCreateClient()
-GET     /clients/:clientId                  @org.iatoki.judgels.sealtiel.controllers.ClientController.viewClient(clientId: Long)
-POST    /clients/:clientId/addAcq           @org.iatoki.judgels.sealtiel.controllers.ClientController.addClientAcquaintance(clientId: Long)
-GET     /clients/:clientId/remove/:channel  @org.iatoki.judgels.sealtiel.controllers.ClientController.removeClientAcquaintance(clientId: Long, channel: String)
+GET     /clients/                                       @org.iatoki.judgels.sealtiel.controllers.ClientController.index()
+GET     /clients/create                                 @org.iatoki.judgels.sealtiel.controllers.ClientController.createClient()
+POST    /clients/add                                    @org.iatoki.judgels.sealtiel.controllers.ClientController.postCreateClient()
+GET     /clients/:clientId                              @org.iatoki.judgels.sealtiel.controllers.ClientController.viewClient(clientId: Long)
+POST    /clients/:clientId/addAcq                       @org.iatoki.judgels.sealtiel.controllers.ClientController.addClientAcquaintance(clientId: Long)
+GET     /clients/:clientId/remove/:channel              @org.iatoki.judgels.sealtiel.controllers.ClientController.removeClientAcquaintance(clientId: Long, channel: String)
 
-# Services
-POST    /services/get_message               @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.getMessage()
-POST    /services/send_message              @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.sendMessage()
-POST    /services/send_confirmation         @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.confirmMessage()
-POST    /services/send_rpc_message          @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.sendRPCMessage()
-POST    /services/extend_timeout            @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.extendTimeout()
+# API
+POST    /api/v1/messages/fetch                          @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.fetchMessage()
+POST    /api/v1/messages/send                           @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.sendMessage()
+POST    /api/v1/messages/:messageId/acknowledge         @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.acknowledgeMessage(messageId: Long)
+POST    /api/v1/messages/:messageId/extendTimeout       @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.extendTimeout(messageId: Long)
 
