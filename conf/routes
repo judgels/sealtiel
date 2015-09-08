@@ -15,8 +15,8 @@ POST    /clients/:clientId/addAcq                       @org.iatoki.judgels.seal
 GET     /clients/:clientId/remove/:channel              @org.iatoki.judgels.sealtiel.controllers.ClientController.removeClientAcquaintance(clientId: Long, channel: String)
 
 # API
-POST    /api/v1/messages/fetch                          @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.fetchMessage()
-POST    /api/v1/messages/send                           @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.sendMessage()
-POST    /api/v1/messages/:messageId/acknowledge         @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.acknowledgeMessage(messageId: Long)
-POST    /api/v1/messages/:messageId/extendTimeout       @org.iatoki.judgels.sealtiel.controllers.apis.MessageAPIController.extendTimeout(messageId: Long)
+POST    /api/v1/messages/fetch                          @org.iatoki.judgels.sealtiel.controllers.apis.v1.messages.MessageAPIControllerV1.fetchMessage()
+POST    /api/v1/messages/send                           @org.iatoki.judgels.sealtiel.controllers.apis.v1.messages.MessageAPIControllerV1.sendMessage()
+POST    /api/v1/messages/:messageId/acknowledge         @org.iatoki.judgels.sealtiel.controllers.apis.v1.messages.MessageAPIControllerV1.acknowledgeMessage(messageId: Long)
+POST    /api/v1/messages/:messageId/extendTimeout       @org.iatoki.judgels.sealtiel.controllers.apis.v1.messages.MessageAPIControllerV1.extendTimeout(messageId: Long)
 

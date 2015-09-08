@@ -1,4 +1,4 @@
-package org.iatoki.judgels.sealtiel.controllers.apis;
+package org.iatoki.judgels.sealtiel.controllers.apis.v1.messages;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -39,7 +39,7 @@ import static org.iatoki.judgels.play.controllers.apis.JudgelsAPIControllerUtils
 @Singleton
 @Named
 @JudgelsAPIController
-public final class MessageAPIController extends Controller {
+public final class MessageAPIControllerV1 extends Controller {
 
     private final ClientService clientService;
     private final ScheduledThreadPoolExecutor executorService;
@@ -49,7 +49,7 @@ public final class MessageAPIController extends Controller {
     private final Map<Long, Long> unacknowledgedMessages;
 
     @Inject
-    public MessageAPIController(ClientService clientService, MessageService messageService, @RabbitMQService QueueService queueService, @QueueThreadPool int threadPool) {
+    public MessageAPIControllerV1(ClientService clientService, MessageService messageService, @RabbitMQService QueueService queueService, @QueueThreadPool int threadPool) {
         this.clientService = clientService;
         this.executorService = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(threadPool);
         this.messageService = messageService;
@@ -62,14 +62,14 @@ public final class MessageAPIController extends Controller {
     @Transactional
     public Result sendMessage() {
         JudgelsAppClientAPIIdentity identity = authenticateAsJudgelsAppClient(clientService);
-        SendMessageRequestBody body = parseRequestBody(SendMessageRequestBody.class);
+        MessageSendRequestV1 requestBody = parseRequestBody(MessageSendRequestV1.class);
 
         Client client = clientService.findClientByJid(identity.getClientJid());
-        if (!client.getAcquaintances().contains(body.targetClientJid)) {
+        if (!client.getAcquaintances().contains(requestBody.targetClientJid)) {
             throw new JudgelsAPIForbiddenException("Target client is not an acquaintance of source client");
         }
 
-        Message message = messageService.createMessage(client.getJid(), IdentityUtils.getIpAddress(), body.targetClientJid, body.messageType, body.message, body.priority);
+        Message message = messageService.createMessage(client.getJid(), IdentityUtils.getIpAddress(), requestBody.targetClientJid, requestBody.messageType, requestBody.message, requestBody.priority);
         try {
             queueService.putMessageInQueue(message.getTargetClientJid(), Math.min(Math.max(message.getPriority(), 0), 10), new Gson().toJson(message).getBytes());
         } catch (IOException | TimeoutException e) {
@@ -100,7 +100,15 @@ public final class MessageAPIController extends Controller {
         unacknowledgedMessages.put(message.getId(), queueMessage.getTag());
         requeuers.put(message.getId(), executorService.schedule(new Requeuer(message.getId(), queueService), 15, TimeUnit.MINUTES));
 
-        return ok(queueMessage.getContent());
+        MessageFetchResponseV1 responseBody = new MessageFetchResponseV1();
+        responseBody.id = message.getId();
+        responseBody.sourceClientJid = message.getSourceClientJid();
+        responseBody.sourceIPAddress = message.getSourceIPAddress();
+        responseBody.messageType = message.getMessageType();
+        responseBody.message = message.getMessage();
+        responseBody.timestamp = message.getTimestamp();
+
+        return ok(new Gson().toJson(responseBody));
     }
 
     @Transactional(readOnly = true)
@@ -139,13 +147,5 @@ public final class MessageAPIController extends Controller {
         }
 
         return ok();
-    }
-
-    static class SendMessageRequestBody {
-
-        public String targetClientJid;
-        public String messageType;
-        public String message;
-        public int priority;
     }
 }
