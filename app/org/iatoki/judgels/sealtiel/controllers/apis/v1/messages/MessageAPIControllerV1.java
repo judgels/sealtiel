@@ -138,7 +138,7 @@ public final class MessageAPIControllerV1 extends Controller {
         try {
             queueService.ackMessage(unacknowledgedMessages.get(messageId));
         } catch (IOException | TimeoutException e) {
-            throw new RuntimeException(e);
+            throw new JudgelsAPIInternalServerErrorException(e);
         }
 
         if (requeuers.containsKey(messageId)) {
