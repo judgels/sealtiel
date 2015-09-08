@@ -6,7 +6,7 @@ import org.iatoki.judgels.play.IdentityUtils;
 import org.iatoki.judgels.play.apis.JudgelsAPIForbiddenException;
 import org.iatoki.judgels.play.apis.JudgelsAPIInternalServerErrorException;
 import org.iatoki.judgels.play.apis.JudgelsAppClientAPIIdentity;
-import org.iatoki.judgels.play.controllers.apis.JudgelsAPIController;
+import org.iatoki.judgels.play.controllers.apis.AbstractJudgelsAPIController;
 import org.iatoki.judgels.sealtiel.Client;
 import org.iatoki.judgels.sealtiel.Message;
 import org.iatoki.judgels.sealtiel.QueueMessage;
@@ -19,7 +19,6 @@ import org.iatoki.judgels.sealtiel.services.MessageService;
 import org.iatoki.judgels.sealtiel.services.QueueService;
 import play.db.jpa.Transactional;
 import play.mvc.BodyParser;
-import play.mvc.Controller;
 import play.mvc.Result;
 
 import javax.inject.Inject;
@@ -33,13 +32,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static org.iatoki.judgels.play.controllers.apis.JudgelsAPIControllerUtils.authenticateAsJudgelsAppClient;
-import static org.iatoki.judgels.play.controllers.apis.JudgelsAPIControllerUtils.parseRequestBody;
-
 @Singleton
 @Named
-@JudgelsAPIController
-public final class MessageAPIControllerV1 extends Controller {
+public final class MessageAPIControllerV1 extends AbstractJudgelsAPIController {
 
     private final ClientService clientService;
     private final ScheduledThreadPoolExecutor executorService;
