@@ -1,4 +1,4 @@
-package org.iatoki.judgels.sealtiel.controllers.apis.v1.messages;
+package org.iatoki.judgels.sealtiel.controllers.api.client.v1.messages;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -13,6 +13,8 @@ import org.iatoki.judgels.sealtiel.QueueMessage;
 import org.iatoki.judgels.sealtiel.UnacknowledgedMessages;
 import org.iatoki.judgels.sealtiel.config.QueueThreadPool;
 import org.iatoki.judgels.sealtiel.config.RabbitMQService;
+import org.iatoki.judgels.sealtiel.controllers.api.object.v1.ClientMessageV1;
+import org.iatoki.judgels.sealtiel.controllers.api.object.v1.ServerMessageV1;
 import org.iatoki.judgels.sealtiel.runnables.Requeuer;
 import org.iatoki.judgels.sealtiel.services.ClientService;
 import org.iatoki.judgels.sealtiel.services.MessageService;
@@ -34,7 +36,7 @@ import java.util.concurrent.TimeoutException;
 
 @Singleton
 @Named
-public final class MessageAPIControllerV1 extends AbstractJudgelsAPIController {
+public final class ClientMessageAPIControllerV1 extends AbstractJudgelsAPIController {
 
     private final ClientService clientService;
     private final ScheduledThreadPoolExecutor executorService;
@@ -44,7 +46,7 @@ public final class MessageAPIControllerV1 extends AbstractJudgelsAPIController {
     private final Map<Long, Long> unacknowledgedMessages;
 
     @Inject
-    public MessageAPIControllerV1(ClientService clientService, MessageService messageService, @RabbitMQService QueueService queueService, @QueueThreadPool int threadPool) {
+    public ClientMessageAPIControllerV1(ClientService clientService, MessageService messageService, @RabbitMQService QueueService queueService, @QueueThreadPool int threadPool) {
         this.clientService = clientService;
         this.executorService = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(threadPool);
         this.messageService = messageService;
@@ -57,7 +59,7 @@ public final class MessageAPIControllerV1 extends AbstractJudgelsAPIController {
     @Transactional
     public Result sendMessage() {
         JudgelsAppClientAPIIdentity identity = authenticateAsJudgelsAppClient(clientService);
-        MessageSendRequestV1 requestBody = parseRequestBody(MessageSendRequestV1.class);
+        ClientMessageV1 requestBody = parseRequestBody(ClientMessageV1.class);
 
         Client client = clientService.findClientByJid(identity.getClientJid());
         if (!client.getAcquaintances().contains(requestBody.targetClientJid)) {
@@ -95,7 +97,7 @@ public final class MessageAPIControllerV1 extends AbstractJudgelsAPIController {
         unacknowledgedMessages.put(message.getId(), queueMessage.getTag());
         requeuers.put(message.getId(), executorService.schedule(new Requeuer(message.getId(), queueService), 15, TimeUnit.MINUTES));
 
-        MessageFetchResponseV1 responseBody = new MessageFetchResponseV1();
+        ServerMessageV1 responseBody = new ServerMessageV1();
         responseBody.id = message.getId();
         responseBody.sourceClientJid = message.getSourceClientJid();
         responseBody.sourceIPAddress = message.getSourceIPAddress();

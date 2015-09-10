@@ -1,6 +1,6 @@
-package org.iatoki.judgels.sealtiel.controllers.apis.v1.messages;
+package org.iatoki.judgels.sealtiel.controllers.api.object.v1;
 
-final class MessageFetchResponseV1 {
+public final class ServerMessageV1 {
 
     public long id;
     public String sourceClientJid;
