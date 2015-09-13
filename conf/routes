@@ -1,22 +1,20 @@
-->      /                                               playcommons.Routes
+->      /                                                                       playcommons.Routes
 
+GET     /                                                                       @org.iatoki.judgels.sealtiel.controllers.ApplicationController.index()
+POST    /login                                                                  @org.iatoki.judgels.sealtiel.controllers.ApplicationController.login()
+GET     /logout                                                                 @org.iatoki.judgels.sealtiel.controllers.ApplicationController.logout()
+GET     /connection                                                             @org.iatoki.judgels.sealtiel.controllers.ApplicationController.checkRabbitmqConnection()
 
-# Home page
-GET     /                                               @org.iatoki.judgels.sealtiel.controllers.ApplicationController.index()
-POST    /login                                          @org.iatoki.judgels.sealtiel.controllers.ApplicationController.login()
-GET     /logout                                         @org.iatoki.judgels.sealtiel.controllers.ApplicationController.logout()
-GET     /connection                                     @org.iatoki.judgels.sealtiel.controllers.ApplicationController.checkRabbitmqConnection()
-
-GET     /clients/                                       @org.iatoki.judgels.sealtiel.controllers.ClientController.index()
-GET     /clients/create                                 @org.iatoki.judgels.sealtiel.controllers.ClientController.createClient()
-POST    /clients/add                                    @org.iatoki.judgels.sealtiel.controllers.ClientController.postCreateClient()
-GET     /clients/:clientId                              @org.iatoki.judgels.sealtiel.controllers.ClientController.viewClient(clientId: Long)
-POST    /clients/:clientId/addAcq                       @org.iatoki.judgels.sealtiel.controllers.ClientController.addClientAcquaintance(clientId: Long)
-GET     /clients/:clientId/remove/:channel              @org.iatoki.judgels.sealtiel.controllers.ClientController.removeClientAcquaintance(clientId: Long, channel: String)
+GET     /clients                                                                @org.iatoki.judgels.sealtiel.controllers.ClientController.index()
+GET     /clients/new                                                            @org.iatoki.judgels.sealtiel.controllers.ClientController.createClient()
+POST    /clients                                                                @org.iatoki.judgels.sealtiel.controllers.ClientController.postCreateClient()
+GET     /clients/:clientId                                                      @org.iatoki.judgels.sealtiel.controllers.ClientController.viewClient(clientId: Long)
+POST    /clients/:clientId/acquaintances                                        @org.iatoki.judgels.sealtiel.controllers.ClientController.postAddAcquaintance(clientId: Long)
+GET     /clients/:clientId/acquaintances/:acquaintanceJid/remove                @org.iatoki.judgels.sealtiel.controllers.ClientController.removeAcquaintance(clientId: Long, acquaintanceJid)
 
 # Client API
 
-POST    /api/v1/messages/fetch                          @org.iatoki.judgels.sealtiel.controllers.api.client.v1.messages.ClientMessageAPIControllerV1.fetchMessage()
-POST    /api/v1/messages/send                           @org.iatoki.judgels.sealtiel.controllers.api.client.v1.messages.ClientMessageAPIControllerV1.sendMessage()
-POST    /api/v1/messages/:messageId/acknowledge         @org.iatoki.judgels.sealtiel.controllers.api.client.v1.messages.ClientMessageAPIControllerV1.acknowledgeMessage(messageId: Long)
-POST    /api/v1/messages/:messageId/extendTimeout       @org.iatoki.judgels.sealtiel.controllers.api.client.v1.messages.ClientMessageAPIControllerV1.extendTimeout(messageId: Long)
+POST    /api/v1/messages/fetch                                                  @org.iatoki.judgels.sealtiel.controllers.api.client.v1.messages.ClientMessageAPIControllerV1.fetchMessage()
+POST    /api/v1/messages/send                                                   @org.iatoki.judgels.sealtiel.controllers.api.client.v1.messages.ClientMessageAPIControllerV1.sendMessage()
+POST    /api/v1/messages/:messageId/acknowledge                                 @org.iatoki.judgels.sealtiel.controllers.api.client.v1.messages.ClientMessageAPIControllerV1.acknowledgeMessage(messageId: Long)
+POST    /api/v1/messages/:messageId/extendTimeout                               @org.iatoki.judgels.sealtiel.controllers.api.client.v1.messages.ClientMessageAPIControllerV1.extendTimeout(messageId: Long)

@@ -88,27 +88,27 @@ public final class ClientController extends AbstractJudgelsController {
     }
 
     @Transactional
-    public Result addClientAcquaintance(long clientId) {
+    public Result postAddAcquaintance(long clientId) {
         Client client = clientService.findClientById(clientId);
         if (client == null) {
             return notFound();
         }
 
         DynamicForm dForm = DynamicForm.form().bindFromRequest();
-        String acquaintanceChannel = dForm.get("acquaintance");
-        clientService.addClientAcquaintance(client.getJid(), acquaintanceChannel);
+        String acquaintanceJid = dForm.get("acquaintanceJid");
+        clientService.addClientAcquaintance(client.getJid(), acquaintanceJid);
 
         return redirect(routes.ClientController.viewClient(clientId));
     }
 
     @Transactional
-    public Result removeClientAcquaintance(long clientId, String acquaintanceChannel) {
+    public Result removeAcquaintance(long clientId, String acquaintancJid) {
         Client client = clientService.findClientById(clientId);
         if (client == null) {
             return notFound();
         }
 
-        clientService.removeClientAcquaintance(client.getJid(), acquaintanceChannel);
+        clientService.removeClientAcquaintance(client.getJid(), acquaintancJid);
 
         return redirect(routes.ClientController.viewClient(clientId));
     }

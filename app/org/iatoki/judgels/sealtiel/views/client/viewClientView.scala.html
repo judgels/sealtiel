@@ -7,11 +7,11 @@
 
 <h3>@Messages.get("acquaintance.add")</h3>
 
-@b3.form(routes.ClientController.addClientAcquaintance(client.getId)) {
+@b3.form(routes.ClientController.postAddAcquaintance(client.getId)) {
     <div class="form-group">
         <label class="control-label col-md-6">@Messages.get("acquaintance.acquaintance")</label>
         <div class="col-md-6">
-            <select name="acquaintance" class="form-control">
+            <select name="acquaintanceJid" class="form-control">
                 @for(acq <- clients) {
                     <option value="@acq.getJid">@acq.getName</option>
                 }
@@ -37,7 +37,7 @@
 				<td>@acquaintance.getName</td>
                 <td>@acquaintance.getJid</td>
                 <td>
-					<a href="@routes.ClientController.removeClientAcquaintance(client.getId, acquaintance.getJid)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+					<a href="@routes.ClientController.removeAcquaintance(client.getId, acquaintance.getJid)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
 				</td>
 			</tr>
 		}
