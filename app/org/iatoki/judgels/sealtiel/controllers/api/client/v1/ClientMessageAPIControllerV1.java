@@ -1,4 +1,4 @@
-package org.iatoki.judgels.sealtiel.controllers.api.client.v1.messages;
+package org.iatoki.judgels.sealtiel.controllers.api.client.v1;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
