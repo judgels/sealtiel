@@ -1,4 +1,6 @@
 @import play.i18n.Messages
+@import org.iatoki.judgels.play.views.html.action.editActionView
+@import org.iatoki.judgels.play.views.html.action.enterActionView
 @import org.iatoki.judgels.play.views.html.table.tableView
 @import org.iatoki.judgels.play.views.html.table.tableHeadersView
 @import org.iatoki.judgels.sealtiel.Client
@@ -23,8 +25,8 @@
             <td>@client.getJid</td>
             <td>@client.getSecret</td>
             <td>
-                <a href="@routes.ClientController.editClient(client.getId)"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                <a href="@routes.ClientController.enterClient(client.getId)"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></a>
+                @editActionView(routes.ClientController.editClient(client.getId))
+                @enterActionView(routes.ClientController.enterClient(client.getId))
             </td>
         </tr>
     }

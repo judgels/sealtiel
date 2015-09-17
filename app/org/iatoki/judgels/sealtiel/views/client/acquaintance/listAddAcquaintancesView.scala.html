@@ -3,6 +3,7 @@
 @import org.iatoki.judgels.sealtiel.controllers.routes
 @import b3.inline.fieldConstructor
 @import org.iatoki.judgels.sealtiel.forms.ClientAcquaintanceAddForm
+@import org.iatoki.judgels.play.views.html.action.removeActionView
 @import org.iatoki.judgels.play.views.html.table.tableView
 @import org.iatoki.judgels.play.views.html.table.tableHeadersView
 
@@ -35,7 +36,7 @@
 			<td>@acquaintance.getName</td>
 			<td>@acquaintance.getJid</td>
 			<td>
-				<a href="@routes.ClientAcquaintanceController.removeAcquaintance(client.getId, acquaintance.getJid)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+				@removeActionView(routes.ClientAcquaintanceController.removeAcquaintance(client.getId, acquaintance.getJid))
 			</td>
 		</tr>
 	}
