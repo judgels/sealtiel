@@ -1,6 +1,7 @@
 auth.text.logIn                             = Log In
 auth.field.username                         = Username
 auth.field.password                         = Password
+auth.error.wrongCredentials                 = Wrong username or password
 
 client.acquaintance.field.name              = Name
 

@@ -27,9 +27,21 @@ public final class ApplicationController extends AbstractSealtielController {
     @RequireCSRFCheck
     public Result postLogin() {
         Form<LoginForm> loginForm = Form.form(LoginForm.class).bindFromRequest();
+
         if (formHasErrors(loginForm)) {
             return showLogin(loginForm);
         }
+
+        LoginForm loginData = loginForm.get();
+
+        String username = loginData.username;
+        String password = loginData.password;
+
+        if (!SealtielProperties.getInstance().getSealtielUsername().equals(username) || !SealtielProperties.getInstance().getSealtielPassword().equals(password)) {
+            loginForm.reject("auth.error.wrongCredentials");
+            return showLogin(loginForm);
+        }
+
 
         session().clear();
         session("username", SealtielProperties.getInstance().getSealtielUsername());
