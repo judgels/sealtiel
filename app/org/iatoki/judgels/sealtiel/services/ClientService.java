@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface ClientService extends JudgelsAppClientService {
 
-    void createClient(String name);
+    Client createClient(String name, String userJid, String ipAddress);
+
+    void updateClient(String clientJid, String name, String userJid, String ipAddress);
 
     List<Client> getAllClients();
 
@@ -17,9 +19,7 @@ public interface ClientService extends JudgelsAppClientService {
 
     List<Client> findClientsByJids(List<String> clientJids);
 
-    void downloadLib(String clientJid);
+    void addClientAcquaintance(String clientJid, String acquaintanceJid);
 
-    void addClientAcquaintance(String clientJid, String acquaintance);
-
-    void removeClientAcquaintance(String clientJid, String acquaintance);
+    void removeClientAcquaintance(String clientJid, String acquaintanceJid);
 }

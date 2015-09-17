@@ -1,33 +1,30 @@
 package org.iatoki.judgels.sealtiel.controllers;
 
-import com.google.common.collect.ImmutableList;
-import org.iatoki.judgels.play.InternalLink;
-import org.iatoki.judgels.play.LazyHtml;
-import org.iatoki.judgels.play.controllers.AbstractJudgelsController;
-import org.iatoki.judgels.play.views.html.layouts.headingLayout;
-import org.iatoki.judgels.play.views.html.layouts.headingWithActionLayout;
-import org.iatoki.judgels.play.views.html.layouts.tabLayout;
+import org.iatoki.judgels.play.HtmlTemplate;
+import org.iatoki.judgels.play.IdentityUtils;
 import org.iatoki.judgels.sealtiel.Client;
-import org.iatoki.judgels.sealtiel.forms.ClientCreateForm;
+import org.iatoki.judgels.sealtiel.controllers.security.LoggedIn;
+import org.iatoki.judgels.sealtiel.forms.ClientForm;
 import org.iatoki.judgels.sealtiel.services.ClientService;
-import org.iatoki.judgels.sealtiel.controllers.securities.LoggedIn;
 import org.iatoki.judgels.sealtiel.views.html.client.createClientView;
+import org.iatoki.judgels.sealtiel.views.html.client.editClientView;
 import org.iatoki.judgels.sealtiel.views.html.client.listClientsView;
-import org.iatoki.judgels.sealtiel.views.html.client.viewClientView;
-import play.data.DynamicForm;
 import play.data.Form;
 import play.db.jpa.Transactional;
+import play.filters.csrf.AddCSRFToken;
+import play.filters.csrf.RequireCSRFCheck;
 import play.i18n.Messages;
 import play.mvc.Result;
 import play.mvc.Security;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.List;
 
-@Security.Authenticated(LoggedIn.class)
+@Singleton
 @Named
-public final class ClientController extends AbstractJudgelsController {
+public final class ClientController extends AbstractClientController {
 
     private final ClientService clientService;
 
@@ -38,91 +35,102 @@ public final class ClientController extends AbstractJudgelsController {
 
     @Transactional(readOnly = true)
     public Result index() {
-        LazyHtml content = new LazyHtml(listClientsView.render(clientService.getAllClients()));
-        content.appendLayout(c -> headingWithActionLayout.render(Messages.get("client.list"), new InternalLink(Messages.get("commons.create"), routes.ClientController.createClient()), c));
-        SealtielControllerUtils.getInstance().appendSidebarLayout(content);
-        SealtielControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
-              new InternalLink(Messages.get("client.clients"), routes.ClientController.index())
-        ));
-        SealtielControllerUtils.getInstance().appendTemplateLayout(content, "Clients");
+        if (session("username") == null) {
+            return redirect(routes.ApplicationController.login());
+        }
 
-        return SealtielControllerUtils.getInstance().lazyOk(content);
+        List<Client> clients = clientService.getAllClients();
+
+        return showListClients(clients);
     }
 
+    @Security.Authenticated(LoggedIn.class)
+    @AddCSRFToken
     public Result createClient() {
-        return showCreateClient(Form.form(ClientCreateForm.class));
+        Form<ClientForm> clientCreateForm = Form.form(ClientForm.class);
+
+        return showCreateClient(clientCreateForm);
     }
 
+    @Security.Authenticated(LoggedIn.class)
+    @RequireCSRFCheck
     @Transactional
     public Result postCreateClient() {
-        Form<ClientCreateForm> clientCreateForm = Form.form(ClientCreateForm.class).bindFromRequest();
+        Form<ClientForm> clientCreateForm = Form.form(ClientForm.class).bindFromRequest();
+
         if (formHasErrors(clientCreateForm)) {
             return showCreateClient(clientCreateForm);
         }
 
-        ClientCreateForm clientCreateData = clientCreateForm.get();
-        clientService.createClient(clientCreateData.name);
+        ClientForm clientCreateData = clientCreateForm.get();
+        Client client = clientService.createClient(clientCreateData.name, IdentityUtils.getUserJid(), IdentityUtils.getIpAddress());
+
+        return redirect(routes.ClientController.enterClient(client.getId()));
+    }
+
+    @Security.Authenticated(LoggedIn.class)
+    @AddCSRFToken
+    @Transactional
+    public Result editClient(long clientId) {
+        Client client = clientService.findClientById(clientId);
+
+        ClientForm clientEditData = new ClientForm();
+        clientEditData.name = client.getName();
+
+        Form<ClientForm> clientEditForm = Form.form(ClientForm.class).fill(clientEditData);
+
+        return showEditClient(client, clientEditForm);
+    }
+
+    @Security.Authenticated(LoggedIn.class)
+    @RequireCSRFCheck
+    @Transactional
+    public Result postEditClient(long clientId) {
+        Client client = clientService.findClientById(clientId);
+
+        Form<ClientForm> clientEditForm = Form.form(ClientForm.class).bindFromRequest();
+        if (formHasErrors(clientEditForm)) {
+            return showEditClient(client, clientEditForm);
+        }
+
+        ClientForm clientEditData = clientEditForm.get();
+        clientService.updateClient(client.getJid(), clientEditData.name, IdentityUtils.getUserJid(), IdentityUtils.getIpAddress());
 
         return redirect(routes.ClientController.index());
     }
 
-    @Transactional(readOnly = true)
-    public Result viewClient(long clientId) {
-        Client client = clientService.findClientById(clientId);
-        if (client == null) {
-            return notFound();
-        }
-
-        List<Client> acquaintances = clientService.findClientsByJids(client.getAcquaintances());
-
-        LazyHtml content = new LazyHtml(viewClientView.render(client, clientService.getAllClients(), acquaintances));
-        content.appendLayout(c -> tabLayout.render(ImmutableList.of(new InternalLink(Messages.get("acquaintance.acquaintances"), routes.ClientController.viewClient(client.getId()))), c));
-        SealtielControllerUtils.getInstance().appendSidebarLayout(content);
-        SealtielControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
-              new InternalLink(Messages.get("client.clients"), routes.ClientController.index()),
-              new InternalLink(Messages.get("client.view"), routes.ClientController.viewClient(client.getId()))
-        ));
-        SealtielControllerUtils.getInstance().appendTemplateLayout(content, "Client - View");
-
-        return SealtielControllerUtils.getInstance().lazyOk(content);
+    public Result enterClient(long clientId) {
+        return redirect(routes.ClientAcquaintanceController.index(clientId));
     }
 
-    @Transactional
-    public Result postAddAcquaintance(long clientId) {
-        Client client = clientService.findClientById(clientId);
-        if (client == null) {
-            return notFound();
-        }
+    private Result showListClients(List<Client> clients) {
+        HtmlTemplate template = new HtmlTemplate();
 
-        DynamicForm dForm = DynamicForm.form().bindFromRequest();
-        String acquaintanceJid = dForm.get("acquaintanceJid");
-        clientService.addClientAcquaintance(client.getJid(), acquaintanceJid);
+        template.setContent(listClientsView.render(clients));
+        template.setMainTitle(Messages.get("client.text.list"));
+        template.addMainButton(Messages.get("client.button.new"), routes.ClientController.createClient());
 
-        return redirect(routes.ClientController.viewClient(clientId));
+        return renderTemplate(template);
     }
 
-    @Transactional
-    public Result removeAcquaintance(long clientId, String acquaintancJid) {
-        Client client = clientService.findClientById(clientId);
-        if (client == null) {
-            return notFound();
-        }
+    private Result showCreateClient(Form<ClientForm> clientCreateForm) {
+        HtmlTemplate template = new HtmlTemplate();
 
-        clientService.removeClientAcquaintance(client.getJid(), acquaintancJid);
+        template.setContent(createClientView.render(clientCreateForm));
+        template.setMainTitle(Messages.get("client.text.new"));
+        template.markBreadcrumbLocation(Messages.get("commons.text.new"), routes.ClientController.createClient());
+        template.setPageTitle(Messages.get("client.text.new"));
 
-        return redirect(routes.ClientController.viewClient(clientId));
+        return renderTemplate(template);
     }
 
-    private Result showCreateClient(Form<ClientCreateForm> form) {
-        LazyHtml content = new LazyHtml(createClientView.render(form));
-        content.appendLayout(c -> headingLayout.render(Messages.get("client.create"), c));
-        SealtielControllerUtils.getInstance().appendSidebarLayout(content);
-        SealtielControllerUtils.getInstance().appendBreadcrumbsLayout(content, ImmutableList.of(
-              new InternalLink(Messages.get("client.clients"), routes.ClientController.index()),
-              new InternalLink(Messages.get("client.create"), routes.ClientController.createClient())
-        ));
-        SealtielControllerUtils.getInstance().appendTemplateLayout(content, "Client - Create");
+    private Result showEditClient(Client client, Form<ClientForm> clientEditForm) {
+        HtmlTemplate template = new HtmlTemplate();
 
-        return SealtielControllerUtils.getInstance().lazyOk(content);
+        template.setContent(editClientView.render(client, clientEditForm));
+        template.markBreadcrumbLocation(Messages.get("commons.text.edit"), routes.ClientController.editClient(client.getId()));
+        template.setPageTitle(client.getName());
+
+        return renderTemplate(template, client);
     }
 }

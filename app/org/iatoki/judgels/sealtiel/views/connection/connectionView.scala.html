@@ -2,10 +2,8 @@
 
 @(isConnected: java.lang.Boolean)
 
-<h2>@Messages.get("connection.status")</h2>
-
 @if(isConnected) {
-    <p>@Messages.get("connection.connected")</p>
+    <p>@Messages.get("connection.text.connected")</p>
 }else {
-    <p>@Messages.get("connection.notConnected")</p>
+    <p>@Messages.get("connection.text.notConnected")</p>
 }

@@ -12,18 +12,10 @@ import javax.persistence.Table;
 @JidPrefix("SECL")
 public final class ClientModel extends AbstractJudgelsModel {
 
-    public String secret;
-
     public String name;
 
-    public String adminName;
-
-    public String adminEmail;
+    public String secret;
 
     @Column(columnDefinition = "TEXT")
     public String acquaintances;
-
-    public long totalDownload;
-
-    public long lastDownloadTime;
 }

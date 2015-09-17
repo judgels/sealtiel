@@ -1,16 +1,22 @@
 ->      /                                                                       playcommons.Routes
 
-GET     /                                                                       @org.iatoki.judgels.sealtiel.controllers.ApplicationController.index()
-POST    /login                                                                  @org.iatoki.judgels.sealtiel.controllers.ApplicationController.login()
+GET     /login                                                                  @org.iatoki.judgels.sealtiel.controllers.ApplicationController.login()
+POST    /login                                                                  @org.iatoki.judgels.sealtiel.controllers.ApplicationController.postLogin()
 GET     /logout                                                                 @org.iatoki.judgels.sealtiel.controllers.ApplicationController.logout()
-GET     /connection                                                             @org.iatoki.judgels.sealtiel.controllers.ApplicationController.checkRabbitmqConnection()
 
-GET     /clients                                                                @org.iatoki.judgels.sealtiel.controllers.ClientController.index()
+GET     /connection                                                             @org.iatoki.judgels.sealtiel.controllers.ConnectionController.index()
+
+GET     /                                                                       @org.iatoki.judgels.sealtiel.controllers.ClientController.index()
 GET     /clients/new                                                            @org.iatoki.judgels.sealtiel.controllers.ClientController.createClient()
 POST    /clients                                                                @org.iatoki.judgels.sealtiel.controllers.ClientController.postCreateClient()
-GET     /clients/:clientId                                                      @org.iatoki.judgels.sealtiel.controllers.ClientController.viewClient(clientId: Long)
-POST    /clients/:clientId/acquaintances                                        @org.iatoki.judgels.sealtiel.controllers.ClientController.postAddAcquaintance(clientId: Long)
-GET     /clients/:clientId/acquaintances/:acquaintanceJid/remove                @org.iatoki.judgels.sealtiel.controllers.ClientController.removeAcquaintance(clientId: Long, acquaintanceJid)
+GET     /clients/:clientId/edit                                                 @org.iatoki.judgels.sealtiel.controllers.ClientController.editClient(clientId: Long)
+POST    /clients/:clientId                                                      @org.iatoki.judgels.sealtiel.controllers.ClientController.postEditClient(clientId: Long)
+
+GET     /clients/:clientId/enter                                                @org.iatoki.judgels.sealtiel.controllers.ClientController.enterClient(clientId: Long)
+
+GET     /clients/:clientId/acquaintances                                        @org.iatoki.judgels.sealtiel.controllers.ClientAcquaintanceController.index(clientId: Long)
+POST    /clients/:clientId/acquaintances                                        @org.iatoki.judgels.sealtiel.controllers.ClientAcquaintanceController.postAddAcquaintance(clientId: Long)
+GET     /clients/:clientId/acquaintances/:acquaintanceJid/remove                @org.iatoki.judgels.sealtiel.controllers.ClientAcquaintanceController.removeAcquaintance(clientId: Long, acquaintanceJid)
 
 # Client API
 

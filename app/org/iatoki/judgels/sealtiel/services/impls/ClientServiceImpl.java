@@ -37,22 +37,30 @@ public final class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void createClient(String name) {
+    public Client createClient(String name, String userJid, String ipAddress) {
         ClientModel clientModel = new ClientModel();
         clientModel.name = name;
         clientModel.acquaintances = "";
-        clientModel.totalDownload = 0;
-        clientModel.lastDownloadTime = System.currentTimeMillis();
         clientModel.secret = JudgelsPlayUtils.hashMD5(UUID.randomUUID().toString());
 
-        clientDao.persist(clientModel, IdentityUtils.getUserJid(), IdentityUtils.getIpAddress());
+        clientDao.persist(clientModel, userJid, ipAddress);
+
+        return createClientFromModel(clientModel);
+    }
+
+    @Override
+    public void updateClient(String clientJid, String name, String userJid, String ipAddress) {
+        ClientModel clientModel = clientDao.findByJid(clientJid);
+        clientModel.name = name;
+
+        clientDao.edit(clientModel, userJid, ipAddress);
     }
 
     @Override
     public List<Client> getAllClients() {
         List<ClientModel> clientModels = clientDao.getAll();
 
-        return clientModels.stream().map(c -> new Client(c.id, c.jid, c.secret, c.name, Arrays.asList(c.acquaintances.split(",")), c.totalDownload, c.lastDownloadTime)).collect(Collectors.toList());
+        return clientModels.stream().map(c -> new Client(c.id, c.jid, c.secret, c.name, Arrays.asList(c.acquaintances.split(",")))).collect(Collectors.toList());
     }
 
     @Override
@@ -80,16 +88,7 @@ public final class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void downloadLib(String clientJid) {
-        ClientModel clientModel = clientDao.findByJid(clientJid);
-        clientModel.totalDownload++;
-        clientModel.lastDownloadTime = System.currentTimeMillis();
-
-        clientDao.edit(clientModel, IdentityUtils.getUserJid(), IdentityUtils.getIpAddress());
-    }
-
-    @Override
-    public void addClientAcquaintance(String clientJid, String acquaintance) {
+    public void addClientAcquaintance(String clientJid, String acquaintanceJid) {
         ClientModel clientModel = clientDao.findByJid(clientJid);
         List<String> list = null;
         if (!"".equals(clientModel.acquaintances)) {
@@ -97,18 +96,18 @@ public final class ClientServiceImpl implements ClientService {
         } else {
             list = new ArrayList<>();
         }
-        list.add(acquaintance);
+        list.add(acquaintanceJid);
         clientModel.acquaintances = StringUtils.join(list, ",");
 
         clientDao.edit(clientModel, IdentityUtils.getUserJid(), IdentityUtils.getIpAddress());
     }
 
     @Override
-    public void removeClientAcquaintance(String clientJid, String acquaintance) {
+    public void removeClientAcquaintance(String clientJid, String acquaintanceJid) {
         ClientModel clientModel = clientDao.findByJid(clientJid);
         if (!"".equals(clientModel.acquaintances)) {
             List<String> list = Lists.newArrayList(clientModel.acquaintances.split(","));
-            list.remove(acquaintance);
+            list.remove(acquaintanceJid);
             clientModel.acquaintances = StringUtils.join(list, ",");
 
             clientDao.edit(clientModel, IdentityUtils.getUserJid(), IdentityUtils.getIpAddress());
@@ -116,6 +115,6 @@ public final class ClientServiceImpl implements ClientService {
     }
 
     private Client createClientFromModel(ClientModel clientModel) {
-        return new Client(clientModel.id, clientModel.jid, clientModel.secret, clientModel.name, Arrays.asList(clientModel.acquaintances.split(",")), clientModel.totalDownload, clientModel.lastDownloadTime);
+        return new Client(clientModel.id, clientModel.jid, clientModel.secret, clientModel.name, Arrays.asList(clientModel.acquaintances.split(",")));
     }
 }

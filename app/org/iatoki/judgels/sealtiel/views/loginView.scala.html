@@ -9,14 +9,14 @@
 
 <div class="row login-content">
     <div class="col-md-12">
-        <h2>@Messages.get("login.login")</h2>
-
         @formErrorView(form)
 
-        @b3.form(routes.ApplicationController.login()) {
-            @b3.text(form("username"), '_label -> Messages.get("login.username"))
-            @b3.password(form("password"), '_label -> Messages.get("login.password"))
-            @b3.submit('class -> "btn btn-primary") { @Messages.get("login.logIn") }
+        @b3.form(routes.ApplicationController.postLogin()) {
+            @helper.CSRF.formField
+
+            @b3.text(form("username"), '_label -> Messages.get("auth.field.username"))
+            @b3.password(form("password"), '_label -> Messages.get("auth.field.password"))
+            @b3.submit('class -> "btn btn-primary") { @Messages.get("commons.auth.button.logIn") }
         }
     </div>
 </div>

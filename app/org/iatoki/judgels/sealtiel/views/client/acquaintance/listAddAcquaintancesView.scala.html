@@ -1,0 +1,43 @@
+@import play.i18n.Messages
+@import org.iatoki.judgels.sealtiel.Client
+@import org.iatoki.judgels.sealtiel.controllers.routes
+@import b3.inline.fieldConstructor
+@import org.iatoki.judgels.sealtiel.forms.ClientAcquaintanceAddForm
+@import org.iatoki.judgels.play.views.html.table.tableView
+@import org.iatoki.judgels.play.views.html.table.tableHeadersView
+
+@(client: Client, acquaintanceAddForm: Form[ClientAcquaintanceAddForm], clients: List[Client], acquaintances: List[Client])
+
+<h3>@Messages.get("client.acquaintance.text.add")</h3>
+
+@b3.form(routes.ClientAcquaintanceController.postAddAcquaintance(client.getId)) {
+	@b3.select(acquaintanceAddForm("acquaintanceJid"), clients.map(c => c.getJid -> c.getName).toSeq, '_label -> Messages.get("client.acquaintance.field.name"))
+
+	@b3.submit('class -> "btn btn-primary") { @Messages.get("commons.button.add") }
+}
+
+<hr />
+
+<h3>@Messages.get("client.acquaintance.text.list")</h3>
+
+@listFunc(newPageIndex: scala.Long, newOrderBy: String, newOrderDir: String, newFilterString: String) = @{routes.ClientAcquaintanceController.index(client.getId)}
+
+@tableView() {
+	@tableHeadersView(0L, "id", "asc", "", listFunc)(
+		"id" -> Messages.get("commons.field.id"),
+		"" -> Messages.get("client.acquaintance.field.name"),
+		"" -> Messages.get("commons.field.jid")
+	)
+	<tbody>
+	@for(acquaintance <- acquaintances) {
+		<tr>
+			<td>@acquaintance.getId</td>
+			<td>@acquaintance.getName</td>
+			<td>@acquaintance.getJid</td>
+			<td>
+				<a href="@routes.ClientAcquaintanceController.removeAcquaintance(client.getId, acquaintance.getJid)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+			</td>
+		</tr>
+	}
+	</tbody>
+}

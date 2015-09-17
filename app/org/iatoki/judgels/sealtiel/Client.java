@@ -11,17 +11,13 @@ public final class Client implements JudgelsAppClient {
     private final String secret;
     private final String name;
     private final List<String> acquaintances;
-    private final long totalDownload;
-    private final long lastDownloadTime;
 
-    public Client(long id, String jid, String secret, String name, List<String> acquaintances, long totalDownload, long lastDownloadTime) {
+    public Client(long id, String jid, String secret, String name, List<String> acquaintances) {
         this.id = id;
         this.jid = jid;
         this.secret = secret;
         this.name = name;
         this.acquaintances = acquaintances;
-        this.totalDownload = totalDownload;
-        this.lastDownloadTime = lastDownloadTime;
     }
 
     public long getId() {
@@ -45,13 +41,5 @@ public final class Client implements JudgelsAppClient {
 
     public List<String> getAcquaintances() {
         return acquaintances;
-    }
-
-    public long getTotalDownload() {
-        return totalDownload;
-    }
-
-    public long getLastDownloadTime() {
-        return lastDownloadTime;
     }
 }
