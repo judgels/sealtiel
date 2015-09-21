@@ -1,10 +1,13 @@
 @import play.i18n.Messages
+@import org.iatoki.judgels.play.views.html.form.globalFormErrorsView
 @import org.iatoki.judgels.sealtiel.forms.ClientForm
 @import org.iatoki.judgels.sealtiel.controllers.routes
 
 @(clientCreateForm: Form[ClientForm])
 
 @implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-md-3", "col-md-9") }
+
+@globalFormErrorsView(clientCreateForm)
 
 @b3.form(routes.ClientController.postCreateClient()) {
     @helper.CSRF.formField
