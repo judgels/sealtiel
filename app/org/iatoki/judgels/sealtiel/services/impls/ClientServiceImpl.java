@@ -91,7 +91,7 @@ public final class ClientServiceImpl implements ClientService {
     public void addClientAcquaintance(String clientJid, String acquaintanceJid) {
         ClientModel clientModel = clientDao.findByJid(clientJid);
         List<String> list = null;
-        if (!"".equals(clientModel.acquaintances)) {
+        if (!clientModel.acquaintances.isEmpty()) {
             list = Lists.newArrayList(clientModel.acquaintances.split(","));
         } else {
             list = new ArrayList<>();
@@ -105,7 +105,7 @@ public final class ClientServiceImpl implements ClientService {
     @Override
     public void removeClientAcquaintance(String clientJid, String acquaintanceJid) {
         ClientModel clientModel = clientDao.findByJid(clientJid);
-        if (!"".equals(clientModel.acquaintances)) {
+        if (!clientModel.acquaintances.isEmpty()) {
             List<String> list = Lists.newArrayList(clientModel.acquaintances.split(","));
             list.remove(acquaintanceJid);
             clientModel.acquaintances = StringUtils.join(list, ",");
