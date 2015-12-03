@@ -19,8 +19,4 @@ public interface ClientService extends JudgelsAppClientService {
     Client findClientByJid(String clientJid);
 
     List<Client> findClientsByJids(List<String> clientJids);
-
-    void addClientAcquaintance(String clientJid, String acquaintanceJid);
-
-    void removeClientAcquaintance(String clientJid, String acquaintanceJid);
 }
