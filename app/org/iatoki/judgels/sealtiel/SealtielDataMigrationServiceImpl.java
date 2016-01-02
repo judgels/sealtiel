@@ -62,7 +62,7 @@ public final class SealtielDataMigrationServiceImpl extends AbstractBaseDataMigr
             String acquaintancesString = resultSet.getString("acquaintances");
             List<String> acquaintancesList = Arrays.asList(acquaintancesString.split(","));
 
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO sealtiel_client_acquaintances (userCreate, timeCreate, ipCreate, userUpdate, timeUpdate, ipUpdate, clientJid, acquaintance) VALUES(?, ?, ?, ?, ?, ?, ?, ?);");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO sealtiel_client_acquaintance (userCreate, timeCreate, ipCreate, userUpdate, timeUpdate, ipUpdate, clientJid, acquaintance) VALUES(?, ?, ?, ?, ?, ?, ?, ?);");
             preparedStatement.setString(1, userCreate);
             preparedStatement.setLong(2, timeCreate);
             preparedStatement.setString(3, ipCreate);

@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "sealtiel_client_acquaintances")
+@Table(name = "sealtiel_client_acquaintance")
 public final class ClientAcquaintanceModel extends AbstractModel {
 
     @Id
