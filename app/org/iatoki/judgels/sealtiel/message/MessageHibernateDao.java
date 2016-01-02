@@ -1,6 +1,6 @@
 package org.iatoki.judgels.sealtiel.message;
 
-import org.iatoki.judgels.play.models.daos.impls.AbstractJudgelsHibernateDao;
+import org.iatoki.judgels.play.model.AbstractJudgelsHibernateDao;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

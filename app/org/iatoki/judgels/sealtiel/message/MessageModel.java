@@ -1,7 +1,7 @@
 package org.iatoki.judgels.sealtiel.message;
 
+import org.iatoki.judgels.play.model.AbstractJudgelsModel;
 import org.iatoki.judgels.play.models.JidPrefix;
-import org.iatoki.judgels.play.models.entities.AbstractJudgelsModel;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
