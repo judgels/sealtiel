@@ -6,7 +6,11 @@ import org.iatoki.judgels.play.migration.AbstractBaseDataMigrationServiceImpl;
 import play.db.jpa.JPA;
 
 import javax.inject.Singleton;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 
