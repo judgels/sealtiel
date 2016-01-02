@@ -15,17 +15,17 @@ public final class SealtielDataMigrationServiceImpl extends AbstractBaseDataMigr
 
     @Override
     protected void onUpgrade(long databaseVersion, long codeDatabaseVersion) throws SQLException {
-        if (databaseVersion < 1) {
-            migrateV0toV1();
-        }
         if (databaseVersion < 2) {
             migrateV1toV2();
+        }
+        if (databaseVersion < 3) {
+            migrateV2toV3();
         }
     }
 
     @Override
     public long getCodeDataVersion() {
-        return 2;
+        return 3;
     }
 
     private void migrateV1toV2() throws SQLException {
@@ -40,7 +40,7 @@ public final class SealtielDataMigrationServiceImpl extends AbstractBaseDataMigr
         statement.execute("ALTER TABLE sealtiel_client DROP totalDownload;");
     }
 
-    private void migrateV0toV1() throws SQLException {
+    private void migrateV2toV3() throws SQLException {
         SessionImpl session = (SessionImpl) JPA.em().unwrap(Session.class);
         Connection connection = session.getJdbcConnectionAccess().obtainConnection();
 
