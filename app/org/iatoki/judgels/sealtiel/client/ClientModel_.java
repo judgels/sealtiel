@@ -1,6 +1,6 @@
 package org.iatoki.judgels.sealtiel.client;
 
-import org.iatoki.judgels.play.models.entities.AbstractJudgelsModel_;
+import org.iatoki.judgels.play.model.AbstractJudgelsModel_;
 
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
@@ -17,5 +17,4 @@ public abstract class ClientModel_ extends AbstractJudgelsModel_ {
         public static volatile SingularAttribute<ClientModel, Long> lastDownloadTime;
         public static volatile SingularAttribute<ClientModel, String> secret;
         public static volatile SingularAttribute<ClientModel, String> adminEmail;
-        public static volatile SingularAttribute<ClientModel, String> acquaintances;
 }

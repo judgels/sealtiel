@@ -4,8 +4,8 @@ import org.iatoki.judgels.play.template.HtmlTemplate;
 import org.iatoki.judgels.sealtiel.client.AbstractClientController;
 import org.iatoki.judgels.sealtiel.client.Client;
 import org.iatoki.judgels.sealtiel.client.ClientService;
-import org.iatoki.judgels.sealtiel.security.LoggedIn;
 import org.iatoki.judgels.sealtiel.client.acquaintance.html.listAddAcquaintancesView;
+import org.iatoki.judgels.sealtiel.security.LoggedIn;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.i18n.Messages;
@@ -23,10 +23,12 @@ import java.util.List;
 public final class ClientAcquaintanceController extends AbstractClientController {
 
     private final ClientService clientService;
+    private final ClientAcquaintanceService clientAcquaintanceService;
 
     @Inject
-    public ClientAcquaintanceController(ClientService clientService) {
+    public ClientAcquaintanceController(ClientService clientService, ClientAcquaintanceService clientAcquaintanceService) {
         this.clientService = clientService;
+        this.clientAcquaintanceService = clientAcquaintanceService;
     }
 
     @Transactional
@@ -48,20 +50,20 @@ public final class ClientAcquaintanceController extends AbstractClientController
         Form<ClientAcquaintanceAddForm> clientAcquaintanceAddForm = Form.form(ClientAcquaintanceAddForm.class).bindFromRequest();
         ClientAcquaintanceAddForm clientAcquaintanceAddData = clientAcquaintanceAddForm.get();
 
-        clientService.addClientAcquaintance(client.getJid(), clientAcquaintanceAddData.acquaintanceJid);
+        clientAcquaintanceService.addAcquaintance(client.getJid(), clientAcquaintanceAddData.acquaintanceJid);
 
         return redirect(routes.ClientAcquaintanceController.index(client.getId()));
     }
 
     @Security.Authenticated(LoggedIn.class)
     @Transactional
-    public Result removeAcquaintance(long clientId, String acquaintancJid) {
+    public Result removeAcquaintance(long clientId, String acquaintanceJid) {
         Client client = clientService.findClientById(clientId);
         if (client == null) {
             return notFound();
         }
 
-        clientService.removeClientAcquaintance(client.getJid(), acquaintancJid);
+        clientAcquaintanceService.removeAcquaintance(client.getJid(), acquaintanceJid);
 
         return redirect(routes.ClientAcquaintanceController.index(clientId));
     }
