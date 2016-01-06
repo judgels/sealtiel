@@ -69,7 +69,7 @@ public final class ClientAcquaintanceController extends AbstractClientController
     }
 
     private Result showListAddAcquaintance(Client client, Form<ClientAcquaintanceAddForm> acquaintanceAddForm, List<Client> clients, List<Client> acquaintances) {
-        HtmlTemplate template = new HtmlTemplate();
+        HtmlTemplate template = super.getBaseHtmlTemplate();
 
         template.setContent(listAddAcquaintancesView.render(client, acquaintanceAddForm, clients, acquaintances));
         template.setPageTitle(client.getName());

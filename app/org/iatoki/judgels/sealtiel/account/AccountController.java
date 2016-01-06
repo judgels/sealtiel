@@ -55,7 +55,7 @@ public final class AccountController extends AbstractSealtielController {
     }
 
     private Result showLogin(Form<LoginForm> form) {
-        HtmlTemplate template = new HtmlTemplate();
+        HtmlTemplate template = super.getBaseHtmlTemplate();
 
         template.setSingleColumn();
         template.setContent(loginView.render(form));

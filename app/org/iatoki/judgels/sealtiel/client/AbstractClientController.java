@@ -8,9 +8,15 @@ import play.mvc.Result;
 public abstract class AbstractClientController extends AbstractSealtielController {
 
     @Override
-    protected Result renderTemplate(HtmlTemplate template) {
-        template.markBreadcrumbLocation(Messages.get("client.text.clients"), routes.ClientController.index());
+    protected HtmlTemplate getBaseHtmlTemplate() {
+        HtmlTemplate htmlTemplate = super.getBaseHtmlTemplate();
+        htmlTemplate.markBreadcrumbLocation(Messages.get("client.text.clients"), routes.ClientController.index());
 
+        return htmlTemplate;
+    }
+
+    @Override
+    protected Result renderTemplate(HtmlTemplate template) {
         return super.renderTemplate(template);
     }
 
