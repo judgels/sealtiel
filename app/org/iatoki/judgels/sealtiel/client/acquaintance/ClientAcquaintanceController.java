@@ -69,19 +69,21 @@ public final class ClientAcquaintanceController extends AbstractClientController
     }
 
     private Result showListAddAcquaintance(Client client, Form<ClientAcquaintanceAddForm> acquaintanceAddForm, List<Client> clients, List<Client> acquaintances) {
-        HtmlTemplate template = super.getBaseHtmlTemplate();
+        HtmlTemplate template = getBaseHtmlTemplate(client);
 
         template.setContent(listAddAcquaintancesView.render(client, acquaintanceAddForm, clients, acquaintances));
         template.setPageTitle(client.getName());
 
-        return renderTemplate(template, client);
+        return renderTemplate(template);
     }
 
     @Override
-    protected Result renderTemplate(HtmlTemplate template, Client client) {
+    protected HtmlTemplate getBaseHtmlTemplate(Client client) {
+        HtmlTemplate template = super.getBaseHtmlTemplate(client);
+
         template.addMainTab(Messages.get("client.acquaintance.text.acquaintances"), routes.ClientAcquaintanceController.index(client.getId()));
         template.markBreadcrumbLocation(Messages.get("client.acquaintance.text.acquaintances"), routes.ClientAcquaintanceController.index(client.getId()));
 
-        return super.renderTemplate(template, client);
+        return template;
     }
 }

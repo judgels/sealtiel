@@ -101,7 +101,7 @@ public final class ClientController extends AbstractClientController {
     }
 
     private Result showListClients(List<Client> clients) {
-        HtmlTemplate template = super.getBaseHtmlTemplate();
+        HtmlTemplate template = getBaseHtmlTemplate();
 
         template.setContent(listClientsView.render(clients));
         template.setMainTitle(Messages.get("client.text.list"));
@@ -111,7 +111,7 @@ public final class ClientController extends AbstractClientController {
     }
 
     private Result showCreateClient(Form<ClientForm> clientCreateForm) {
-        HtmlTemplate template = super.getBaseHtmlTemplate();
+        HtmlTemplate template = getBaseHtmlTemplate();
 
         template.setContent(createClientView.render(clientCreateForm));
         template.setMainTitle(Messages.get("client.text.new"));
@@ -122,12 +122,12 @@ public final class ClientController extends AbstractClientController {
     }
 
     private Result showEditClient(Client client, Form<ClientForm> clientEditForm) {
-        HtmlTemplate template = super.getBaseHtmlTemplate();
+        HtmlTemplate template = getBaseHtmlTemplate(client);
 
         template.setContent(editClientView.render(client, clientEditForm));
         template.markBreadcrumbLocation(Messages.get("commons.text.edit"), routes.ClientController.editClient(client.getId()));
         template.setPageTitle(client.getName());
 
-        return renderTemplate(template, client);
+        return renderTemplate(template);
     }
 }
