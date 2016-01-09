@@ -38,7 +38,7 @@ public final class ConnectionController extends AbstractSealtielController {
             status = rabbitMQ.isConnected();
         }
 
-        HtmlTemplate template = new HtmlTemplate();
+        HtmlTemplate template = super.getBaseHtmlTemplate();
 
         template.setContent(connectionView.render(status));
         template.setMainTitle(Messages.get("connection.text.status"));
