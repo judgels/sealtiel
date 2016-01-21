@@ -1,7 +1,7 @@
 package org.iatoki.judgels.sealtiel.client;
 
 import com.google.inject.ImplementedBy;
-import org.iatoki.judgels.play.services.JudgelsAppClientService;
+import org.iatoki.judgels.play.api.JudgelsAppClientService;
 
 import java.util.List;
 

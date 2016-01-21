@@ -3,23 +3,21 @@ package org.iatoki.judgels.sealtiel.connection;
 import org.iatoki.judgels.play.template.HtmlTemplate;
 import org.iatoki.judgels.sealtiel.AbstractSealtielController;
 import org.iatoki.judgels.sealtiel.connection.html.connectionView;
-import org.iatoki.judgels.sealtiel.queue.rabbitmq.RabbitMQService;
-import org.iatoki.judgels.sealtiel.security.LoggedIn;
 import org.iatoki.judgels.sealtiel.queue.QueueService;
 import org.iatoki.judgels.sealtiel.queue.rabbitmq.RabbitMQ;
+import org.iatoki.judgels.sealtiel.queue.rabbitmq.RabbitMQService;
+import org.iatoki.judgels.sealtiel.security.LoggedIn;
 import play.i18n.Messages;
 import play.mvc.Result;
 import play.mvc.Security;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 @Security.Authenticated(LoggedIn.class)
 @Singleton
-@Named
 public final class ConnectionController extends AbstractSealtielController {
 
     @Inject

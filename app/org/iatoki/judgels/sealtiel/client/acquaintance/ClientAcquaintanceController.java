@@ -13,13 +13,11 @@ import play.mvc.Result;
 import play.mvc.Security;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.List;
 
 @Security.Authenticated(LoggedIn.class)
 @Singleton
-@Named
 public final class ClientAcquaintanceController extends AbstractClientController {
 
     private final ClientService clientService;

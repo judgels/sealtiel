@@ -1,6 +1,6 @@
 package org.iatoki.judgels.sealtiel.client;
 
-import org.iatoki.judgels.play.JudgelsAppClient;
+import org.iatoki.judgels.play.api.JudgelsAppClient;
 
 import java.util.List;
 

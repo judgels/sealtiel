@@ -15,12 +15,10 @@ import play.mvc.Result;
 import play.mvc.Security;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.List;
 
 @Singleton
-@Named
 public final class ClientController extends AbstractClientController {
 
     private final ClientService clientService;

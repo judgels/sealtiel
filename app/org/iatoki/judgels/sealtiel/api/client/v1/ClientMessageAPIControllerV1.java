@@ -3,28 +3,27 @@ package org.iatoki.judgels.sealtiel.api.client.v1;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import org.iatoki.judgels.play.IdentityUtils;
-import org.iatoki.judgels.play.apis.JudgelsAPIForbiddenException;
-import org.iatoki.judgels.play.apis.JudgelsAPIInternalServerErrorException;
-import org.iatoki.judgels.play.apis.JudgelsAppClientAPIIdentity;
+import org.iatoki.judgels.play.api.JudgelsAPIForbiddenException;
+import org.iatoki.judgels.play.api.JudgelsAPIInternalServerErrorException;
+import org.iatoki.judgels.play.api.JudgelsAppClientAPIIdentity;
 import org.iatoki.judgels.play.controllers.apis.AbstractJudgelsAPIController;
-import org.iatoki.judgels.sealtiel.client.Client;
-import org.iatoki.judgels.sealtiel.message.Message;
-import org.iatoki.judgels.sealtiel.queue.QueueMessage;
-import org.iatoki.judgels.sealtiel.queue.UnacknowledgedMessages;
-import org.iatoki.judgels.sealtiel.queue.QueueThreadPool;
-import org.iatoki.judgels.sealtiel.queue.rabbitmq.RabbitMQService;
 import org.iatoki.judgels.sealtiel.api.object.v1.ClientMessageV1;
 import org.iatoki.judgels.sealtiel.api.object.v1.ServerMessageV1;
-import org.iatoki.judgels.sealtiel.queue.Requeuer;
+import org.iatoki.judgels.sealtiel.client.Client;
 import org.iatoki.judgels.sealtiel.client.ClientService;
+import org.iatoki.judgels.sealtiel.message.Message;
 import org.iatoki.judgels.sealtiel.message.MessageService;
+import org.iatoki.judgels.sealtiel.queue.QueueMessage;
 import org.iatoki.judgels.sealtiel.queue.QueueService;
+import org.iatoki.judgels.sealtiel.queue.QueueThreadPool;
+import org.iatoki.judgels.sealtiel.queue.Requeuer;
+import org.iatoki.judgels.sealtiel.queue.UnacknowledgedMessages;
+import org.iatoki.judgels.sealtiel.queue.rabbitmq.RabbitMQService;
 import play.db.jpa.Transactional;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.Map;
@@ -35,7 +34,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @Singleton
-@Named
 public final class ClientMessageAPIControllerV1 extends AbstractJudgelsAPIController {
 
     private final ClientService clientService;
