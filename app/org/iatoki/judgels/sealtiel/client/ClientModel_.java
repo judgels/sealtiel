@@ -10,11 +10,6 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(ClientModel.class)
 public abstract class ClientModel_ extends AbstractJudgelsModel_ {
 
-        public static volatile SingularAttribute<ClientModel, String> adminName;
-        public static volatile SingularAttribute<ClientModel, Long> totalDownload;
-        public static volatile SingularAttribute<ClientModel, String> channel;
-        public static volatile SingularAttribute<ClientModel, String> name;
-        public static volatile SingularAttribute<ClientModel, Long> lastDownloadTime;
-        public static volatile SingularAttribute<ClientModel, String> secret;
-        public static volatile SingularAttribute<ClientModel, String> adminEmail;
+    public static volatile SingularAttribute<ClientModel, String> name;
+    public static volatile SingularAttribute<ClientModel, String> secret;
 }

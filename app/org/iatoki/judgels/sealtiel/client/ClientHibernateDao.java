@@ -18,6 +18,6 @@ public final class ClientHibernateDao extends AbstractJudgelsHibernateDao<Client
 
     @Override
     protected List<SingularAttribute<ClientModel, String>> getColumnsFilterableByString() {
-        return ImmutableList.of(ClientModel_.name, ClientModel_.adminName, ClientModel_.adminEmail);
+        return ImmutableList.of(ClientModel_.name);
     }
 }
