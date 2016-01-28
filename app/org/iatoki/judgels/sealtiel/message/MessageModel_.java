@@ -2,11 +2,9 @@ package org.iatoki.judgels.sealtiel.message;
 
 import org.iatoki.judgels.play.model.AbstractJudgelsModel_;
 
-import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value = "org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
 @StaticMetamodel(MessageModel.class)
 public abstract class MessageModel_ extends AbstractJudgelsModel_ {
 
