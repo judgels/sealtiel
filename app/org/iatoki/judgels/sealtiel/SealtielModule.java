@@ -5,7 +5,7 @@ import org.iatoki.judgels.Config;
 import org.iatoki.judgels.play.ApplicationConfig;
 import org.iatoki.judgels.play.general.GeneralName;
 import org.iatoki.judgels.play.general.GeneralVersion;
-import org.iatoki.judgels.play.migration.BaseDataMigrationService;
+import org.iatoki.judgels.play.migration.JudgelsDataMigrator;
 import org.iatoki.judgels.sealtiel.account.AccountConfigSource;
 import org.iatoki.judgels.sealtiel.queue.QueueThreadPool;
 
@@ -21,6 +21,6 @@ public final class SealtielModule extends AbstractModule {
 
         bind(Config.class).annotatedWith(AccountConfigSource.class).toInstance(ApplicationConfig.getInstance());
 
-        bind(BaseDataMigrationService.class).to(SealtielDataMigrationServiceImpl.class);
+        bind(JudgelsDataMigrator.class).to(SealtielDataMigrator.class);
     }
 }

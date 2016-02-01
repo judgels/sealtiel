@@ -2,10 +2,13 @@ package org.iatoki.judgels.sealtiel;
 
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
-import org.iatoki.judgels.play.migration.AbstractBaseDataMigrationServiceImpl;
-import play.db.jpa.JPA;
+import org.iatoki.judgels.play.migration.AbstractJudgelsDataMigrator;
+import org.iatoki.judgels.play.migration.DataMigrationEntityManager;
+import org.iatoki.judgels.play.migration.DataVersionDao;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.persistence.EntityManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,25 +18,33 @@ import java.util.Arrays;
 import java.util.List;
 
 @Singleton
-public final class SealtielDataMigrationServiceImpl extends AbstractBaseDataMigrationServiceImpl {
+public final class SealtielDataMigrator extends AbstractJudgelsDataMigrator {
+
+    private final EntityManager entityManager;
+
+    @Inject
+    public SealtielDataMigrator(DataVersionDao dataVersionDao) {
+        super(dataVersionDao);
+        this.entityManager = DataMigrationEntityManager.createEntityManager();
+    }
 
     @Override
-    protected void onUpgrade(long databaseVersion, long codeDatabaseVersion) throws SQLException {
-        if (databaseVersion < 2) {
+    protected void migrate(long currentDataVersion) throws SQLException {
+        if (currentDataVersion < 2) {
             migrateV1toV2();
         }
-        if (databaseVersion < 3) {
+        if (currentDataVersion < 3) {
             migrateV2toV3();
         }
     }
 
     @Override
-    public long getCodeDataVersion() {
+    public long getLatestDataVersion() {
         return 3;
     }
 
     private void migrateV1toV2() throws SQLException {
-        SessionImpl session = (SessionImpl) JPA.em().unwrap(Session.class);
+        SessionImpl session = (SessionImpl) entityManager.unwrap(Session.class);
         Connection connection = session.getJdbcConnectionAccess().obtainConnection();
 
         Statement statement = connection.createStatement();
@@ -45,12 +56,12 @@ public final class SealtielDataMigrationServiceImpl extends AbstractBaseDataMigr
     }
 
     private void migrateV2toV3() throws SQLException {
-        SessionImpl session = (SessionImpl) JPA.em().unwrap(Session.class);
+        SessionImpl session = (SessionImpl) entityManager.unwrap(Session.class);
         Connection connection = session.getJdbcConnectionAccess().obtainConnection();
 
         Statement statement = connection.createStatement();
 
-        ResultSet resultSet = statement.executeQuery("SELECT * FROM sealtiel_client");
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM sealtiel_client;");
         while (resultSet.next()) {
             String ipCreate = resultSet.getString("ipCreate");
             String ipUpdate = resultSet.getString("ipUpdate");
@@ -78,7 +89,7 @@ public final class SealtielDataMigrationServiceImpl extends AbstractBaseDataMigr
 
         }
 
-        statement.execute("ALTER TABLE sealtiel_client DROP acquaintances");
+        statement.execute("ALTER TABLE sealtiel_client DROP acquaintances;");
     }
 
 }
