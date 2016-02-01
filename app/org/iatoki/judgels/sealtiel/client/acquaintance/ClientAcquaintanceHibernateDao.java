@@ -24,7 +24,7 @@ public final class ClientAcquaintanceHibernateDao extends AbstractHibernateDao<L
         CriteriaQuery<String> query = cb.createQuery(String.class);
         Root<ClientAcquaintanceModel> root = query.from(ClientAcquaintanceModel.class);
 
-        query.select(root.get(ClientAcquaintanceModel_.acquaintance)).where(cb.equal(root.get(ClientAcquaintanceModel_.clientJid), clientJid));
+        query.select(root.get(ClientAcquaintanceModel_.acquaintanceJid)).where(cb.equal(root.get(ClientAcquaintanceModel_.clientJid), clientJid));
         return JPA.em().createQuery(query).getResultList();
     }
 
@@ -38,7 +38,7 @@ public final class ClientAcquaintanceHibernateDao extends AbstractHibernateDao<L
         query.where(
                 cb.and(
                         cb.equal(root.get(ClientAcquaintanceModel_.clientJid), clientJid),
-                        cb.equal(root.get(ClientAcquaintanceModel_.acquaintance), acquaintanceJid))
+                        cb.equal(root.get(ClientAcquaintanceModel_.acquaintanceJid), acquaintanceJid))
         );
 
         return JPA.em().createQuery(query).getSingleResult();
@@ -54,7 +54,7 @@ public final class ClientAcquaintanceHibernateDao extends AbstractHibernateDao<L
         query.select(cb.count(root)).where(
                 cb.and(
                         cb.equal(root.get(ClientAcquaintanceModel_.clientJid), clientJid),
-                        cb.equal(root.get(ClientAcquaintanceModel_.acquaintance), acquaintanceJid))
+                        cb.equal(root.get(ClientAcquaintanceModel_.acquaintanceJid), acquaintanceJid))
         );
 
         return (JPA.em().createQuery(query).getSingleResult() != 0);

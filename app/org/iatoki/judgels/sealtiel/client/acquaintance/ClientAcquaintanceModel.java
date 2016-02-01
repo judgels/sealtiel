@@ -18,5 +18,5 @@ public final class ClientAcquaintanceModel extends AbstractModel {
 
     public String clientJid;
 
-    public String acquaintance;
+    public String acquaintanceJid;
 }

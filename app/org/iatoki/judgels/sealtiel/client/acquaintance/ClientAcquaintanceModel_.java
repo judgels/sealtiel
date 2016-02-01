@@ -10,5 +10,5 @@ public abstract class ClientAcquaintanceModel_ extends AbstractModel_ {
 
     public static volatile SingularAttribute<ClientAcquaintanceModel, Long> id;
     public static volatile SingularAttribute<ClientAcquaintanceModel, String> clientJid;
-    public static volatile SingularAttribute<ClientAcquaintanceModel, String> acquaintance;
+    public static volatile SingularAttribute<ClientAcquaintanceModel, String> acquaintanceJid;
 }

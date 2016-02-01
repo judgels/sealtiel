@@ -18,20 +18,20 @@ public final class ClientAcquaintanceServiceImpl implements ClientAcquaintanceSe
     }
 
     @Override
-    public void addAcquaintance(String clientJid, String acquaintance) {
-        if (clientAcquaintanceDao.existsByRelation(clientJid, acquaintance)) {
+    public void addAcquaintance(String clientJid, String acquaintanceJid) {
+        if (clientAcquaintanceDao.existsByRelation(clientJid, acquaintanceJid)) {
             return;
         }
         ClientAcquaintanceModel clientAcquaintanceModel = new ClientAcquaintanceModel();
         clientAcquaintanceModel.clientJid = clientJid;
-        clientAcquaintanceModel.acquaintance = acquaintance;
+        clientAcquaintanceModel.acquaintanceJid = acquaintanceJid;
 
         clientAcquaintanceDao.persist(clientAcquaintanceModel, IdentityUtils.getUserJid(), IdentityUtils.getIpAddress());
     }
 
     @Override
-    public void removeAcquaintance(String clientJid, String acquaintance) {
-        ClientAcquaintanceModel clientAcquaintanceModel = clientAcquaintanceDao.findByRelation(clientJid, acquaintance);
+    public void removeAcquaintance(String clientJid, String acquaintanceJid) {
+        ClientAcquaintanceModel clientAcquaintanceModel = clientAcquaintanceDao.findByRelation(clientJid, acquaintanceJid);
         clientAcquaintanceDao.remove(clientAcquaintanceModel);
     }
 }

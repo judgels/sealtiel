@@ -40,19 +40,16 @@ public final class SealtielDataMigrator extends AbstractJudgelsDataMigrator {
 
     @Override
     public long getLatestDataVersion() {
-        return 3;
+        return 4;
     }
 
-    private void migrateV1toV2() throws SQLException {
+    private void migrateV3toV4() throws SQLException {
         SessionImpl session = (SessionImpl) entityManager.unwrap(Session.class);
         Connection connection = session.getJdbcConnectionAccess().obtainConnection();
 
         Statement statement = connection.createStatement();
 
-        statement.execute("ALTER TABLE sealtiel_client DROP adminName;");
-        statement.execute("ALTER TABLE sealtiel_client DROP adminEmail;");
-        statement.execute("ALTER TABLE sealtiel_client DROP lastDownloadTime;");
-        statement.execute("ALTER TABLE sealtiel_client DROP totalDownload;");
+        statement.execute("ALTER TABLE sealtiel_client_acquaintance CHANGE acquaintance acquaintanceJid VARCHAR(255);");
     }
 
     private void migrateV2toV3() throws SQLException {
@@ -92,4 +89,15 @@ public final class SealtielDataMigrator extends AbstractJudgelsDataMigrator {
         statement.execute("ALTER TABLE sealtiel_client DROP acquaintances;");
     }
 
+    private void migrateV1toV2() throws SQLException {
+        SessionImpl session = (SessionImpl) entityManager.unwrap(Session.class);
+        Connection connection = session.getJdbcConnectionAccess().obtainConnection();
+
+        Statement statement = connection.createStatement();
+
+        statement.execute("ALTER TABLE sealtiel_client DROP adminName;");
+        statement.execute("ALTER TABLE sealtiel_client DROP adminEmail;");
+        statement.execute("ALTER TABLE sealtiel_client DROP lastDownloadTime;");
+        statement.execute("ALTER TABLE sealtiel_client DROP totalDownload;");
+    }
 }
