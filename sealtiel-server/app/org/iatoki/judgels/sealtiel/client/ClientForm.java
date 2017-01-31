@@ -6,4 +6,8 @@ public final class ClientForm {
 
     @Constraints.Required
     public String name;
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

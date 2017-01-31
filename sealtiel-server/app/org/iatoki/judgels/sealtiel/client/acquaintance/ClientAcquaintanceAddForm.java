@@ -6,4 +6,8 @@ public final class ClientAcquaintanceAddForm {
 
     @Constraints.Required
     public String acquaintanceJid;
+
+    public void setAcquaintanceJid(String acquaintanceJid) {
+        this.acquaintanceJid = acquaintanceJid;
+    }
 }
