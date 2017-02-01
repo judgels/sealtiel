@@ -85,10 +85,7 @@ dependencies {
     play 'javax.inject:javax.inject:1'
     play 'joda-time:joda-time:2.3'
     play 'mysql:mysql-connector-java:5.1.26'
-    play 'org.apache.poi:poi:3.10-FINAL'
     play 'org.hibernate:hibernate-entitymanager:4.3.7.Final'
-    play 'org.jsoup:jsoup:1.8.3'
-    play 'org.seleniumhq.selenium:selenium-java:2.46.0'
     play 'org.springframework:spring-context:4.1.6.RELEASE'
     play ('org.webjars:bootstrap:3.3.4') {
         exclude group: 'org.webjars', module: 'jquery'
