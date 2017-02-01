@@ -7,6 +7,6 @@ bin
 build
 out
 tmp
-*-server/conf/version.txt
-*-server/conf/*.conf
-!*-server/conf/*_default.conf
+*-play/conf/version.txt
+*-play/conf/*.conf
+!*-play/conf/*_default.conf
