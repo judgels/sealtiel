@@ -10,6 +10,14 @@ public class LoginForm {
     @Constraints.Required
     public String password;
 
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
