@@ -23,8 +23,8 @@ repositories {
         url 'https://repo.typesafe.com/typesafe/maven-releases'
     }
     maven {
-        name 'ia-toki-maven-releases'
-        url 'https://dl.bintray.com/ia-toki/releases'
+        name 'judgels-maven-releases'
+        url 'https://dl.bintray.com/judgels/releases'
     }
     ivy {
         name 'typesafe-ivy-release'
@@ -61,9 +61,9 @@ model {
 }
 
 dependencies {
-    play 'org.iatoki.judgels:judgels-commons-api:0.2.1'
-    play 'org.iatoki.judgels:judgels-commons-assets:0.2.1'
-    play 'org.iatoki.judgels:judgels-play-api:0.2.1'
+    play 'org.iatoki.judgels:judgels-commons-api:0.2.2'
+    play 'org.iatoki.judgels:judgels-commons-assets:0.2.2'
+    play 'org.iatoki.judgels:judgels-play-api:0.2.2'
 
 
     play "com.typesafe.play:play-java-jdbc_${scalaVersion}:${playVersion}"
