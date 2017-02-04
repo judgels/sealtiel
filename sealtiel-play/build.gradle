@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.iatoki:gradle-play-idea:0.3.1'
+        classpath 'org.iatoki:gradle-play-idea:0.4.0'
         classpath 'org.iatoki:gradle-play-less:0.2.0'
         classpath 'org.iatoki:gradle-play-webjars:0.1.0'
     }
